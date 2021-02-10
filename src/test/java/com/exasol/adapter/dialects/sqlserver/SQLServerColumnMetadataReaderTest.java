@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import com.exasol.adapter.AdapterProperties;
 import com.exasol.adapter.dialects.BaseIdentifierConverter;
 import com.exasol.adapter.jdbc.AbstractColumnMetadataReaderTestBase;
-import com.exasol.adapter.jdbc.JdbcTypeDescription;
+import com.exasol.adapter.jdbc.JDBCTypeDescription;
 import com.exasol.adapter.metadata.DataType;
 import com.exasol.adapter.metadata.DataType.ExaCharset;
 
@@ -26,7 +26,7 @@ class SQLServerColumnMetadataReaderTest extends AbstractColumnMetadataReaderTest
     void testMapJdbcTypeVarChar() {
         final int expectedSize = 42;
         final DataType type = this.columnMetadataReader
-                .mapJdbcType(new JdbcTypeDescription(Types.VARCHAR, 0, expectedSize, expectedSize, ""));
+                .mapJdbcType(new JDBCTypeDescription(Types.VARCHAR, 0, expectedSize, expectedSize, ""));
         assertThat(type, equalTo(DataType.createVarChar(expectedSize, ExaCharset.ASCII)));
     }
 

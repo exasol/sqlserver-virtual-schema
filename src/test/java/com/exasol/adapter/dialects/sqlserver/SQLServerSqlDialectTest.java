@@ -89,7 +89,6 @@ class SQLServerSqlDialectTest {
     @Test
     void testValidateCatalogProperty() throws PropertyValidationException {
         final SqlDialect sqlDialect = new SQLServerSqlDialect(null, new AdapterProperties(Map.of( //
-                SQL_DIALECT_PROPERTY, "SQLSERVER", //
                 CONNECTION_NAME_PROPERTY, "MY_CONN", //
                 CATALOG_NAME_PROPERTY, "MY_CATALOG")));
         sqlDialect.validateProperties();
@@ -98,7 +97,6 @@ class SQLServerSqlDialectTest {
     @Test
     void testValidateSchemaProperty() throws PropertyValidationException {
         final SqlDialect sqlDialect = new SQLServerSqlDialect(null, new AdapterProperties(Map.of( //
-                SQL_DIALECT_PROPERTY, "SQLSERVER", //
                 CONNECTION_NAME_PROPERTY, "MY_CONN", //
                 SCHEMA_NAME_PROPERTY, "MY_SCHEMA")));
         sqlDialect.validateProperties();
@@ -179,8 +177,7 @@ class SQLServerSqlDialectTest {
 
     @Test
     void testGetSqlGenerationVisitor() {
-        assertThat(this.dialect.getSqlGenerationVisitor(null),
-                CoreMatchers.instanceOf(SQLServerSqlGenerationVisitor.class));
+        assertThat(this.dialect.getSqlGenerator(null), CoreMatchers.instanceOf(SQLServerSqlGenerationVisitor.class));
     }
 
     @Test

@@ -3,10 +3,10 @@ package com.exasol.adapter.dialects.sqlserver;
 import static com.exasol.adapter.dialects.sqlserver.IntegrationTestConstants.*;
 import static com.exasol.dbbuilder.dialects.exasol.AdapterScript.Language.JAVA;
 import static com.exasol.matcher.ResultSetMatcher.matchesResultSet;
+import static com.exasol.matcher.ResultSetStructureMatcher.table;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -44,13 +45,15 @@ class SQLServerSqlDialectIT {
     private static final int MS_SQL_SERVER_PORT = 1433;
     private static final String JDBC_CONNECTION_NAME = "JDBC";
     private static final String VIRTUAL_SCHEMA_JDBC = "VIRTUAL_SCHEMA_JDBC";
+    private static Connection exasolConnection;
+
     @Container
     private static final MSSQLServerContainer MS_SQL_SERVER_CONTAINER = new MSSQLServerContainer(
             MS_SQL_SERVER_CONTAINER_NAME);
     @Container
     private static final ExasolContainer<? extends ExasolContainer<?>> EXASOL_CONTAINER = new ExasolContainer<>(
             EXASOL_DOCKER_IMAGE_REFERENCE) //
-                    .withLogConsumer(new Slf4jLogConsumer(LOGGER));
+                    .withLogConsumer(new Slf4jLogConsumer(LOGGER)).withReuse(true);
 
     private Connection getExasolConnection() throws SQLException {
         return EXASOL_CONTAINER.createConnection("");
@@ -65,7 +68,8 @@ class SQLServerSqlDialectIT {
         createSimpleTable();
         createSqlServerTableNumericAndDateDataTypes();
         createSqlServerTableStringDataTypes();
-        final ExasolObjectFactory exasolFactory = new ExasolObjectFactory(EXASOL_CONTAINER.createConnection(""));
+        exasolConnection = EXASOL_CONTAINER.createConnection("");
+        final ExasolObjectFactory exasolFactory = new ExasolObjectFactory(exasolConnection);
         final ExasolSchema exasolSchema = exasolFactory.createSchema(SCHEMA_EXASOL);
         final AdapterScript adapterScript = createAdapterScript(driverName, exasolSchema);
         final String connectionString = "jdbc:sqlserver://" + DOCKER_IP_ADDRESS + ":"
@@ -73,8 +77,13 @@ class SQLServerSqlDialectIT {
         final ConnectionDefinition connectionDefinition = exasolFactory.createConnectionDefinition(JDBC_CONNECTION_NAME,
                 connectionString, MS_SQL_SERVER_CONTAINER.getUsername(), MS_SQL_SERVER_CONTAINER.getPassword());
         exasolFactory.createVirtualSchemaBuilder(VIRTUAL_SCHEMA_JDBC).adapterScript(adapterScript)
-                .connectionDefinition(connectionDefinition).dialectName("SQLSERVER")
+                .connectionDefinition(connectionDefinition)
                 .properties(Map.of("CATALOG_NAME", "master", "SCHEMA_NAME", SCHEMA_SQL_SERVER)).build();
+    }
+
+    @AfterAll
+    static void afterAll() throws SQLException {
+        exasolConnection.close();
     }
 
     private static void createSqlServerSchema() throws SQLException {
@@ -243,6 +252,24 @@ class SQLServerSqlDialectIT {
         final String expectedRewrittenQuery = "SELECT COUNT_BIG(*) FROM";
         assertAll(() -> assertThat(getActualResultSet(query), matchesResultSet(expected)),
                 () -> assertThat(getExplainVirtualString(query), containsString(expectedRewrittenQuery)));
+    }
+
+    @Test
+    void testWithArtificialWhereClause() {
+        assertVsQuery("SELECT 1 = 1 FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE, //
+                table().row("1 = 1").matches());
+    }
+
+    private void assertVsQuery(final String sql, final Matcher<ResultSet> expected) {
+        try {
+            assertThat(query(sql), expected);
+        } catch (final SQLException exception) {
+            fail("Unable to run assertion query: " + sql + "\nCaused by: " + exception.getMessage());
+        }
+    }
+
+    protected ResultSet query(final String sql) throws SQLException {
+        return exasolConnection.createStatement().executeQuery(sql);
     }
 
     @Test

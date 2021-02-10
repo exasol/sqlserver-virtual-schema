@@ -6,6 +6,7 @@ import java.util.*;
 import com.exasol.adapter.AdapterException;
 import com.exasol.adapter.adapternotes.ColumnAdapterNotesJsonConverter;
 import com.exasol.adapter.dialects.*;
+import com.exasol.adapter.dialects.rewriting.*;
 import com.exasol.adapter.metadata.ColumnMetadata;
 import com.exasol.adapter.metadata.TableMetadata;
 import com.exasol.adapter.sql.*;
@@ -48,39 +49,6 @@ public class SQLServerSqlGenerationVisitor extends SqlGenerationVisitor {
         } else {
             return projectionString;
         }
-    }
-
-    @Override
-    protected String representAsteriskInSelectList(final SqlSelectList selectList) throws AdapterException {
-        final List<String> selectStarList = buildSelectStar(selectList);
-        final List<String> selectListElements = new ArrayList<>(selectStarList.size());
-        selectListElements.addAll(selectStarList);
-        return String.join(", ", selectListElements);
-    }
-
-    private List<String> buildSelectStar(final SqlSelectList selectList) throws AdapterException {
-        final Optional<List<String>> selectStartWithCastedColumns = buildSelectStarWithNodeCast(selectList);
-        return selectStartWithCastedColumns.orElseGet(() -> new ArrayList<>(Collections.singletonList("*")));
-    }
-
-    private Optional<List<String>> buildSelectStarWithNodeCast(final SqlSelectList selectList) throws AdapterException {
-        boolean requiresCast = false;
-        final SqlStatementSelect select = (SqlStatementSelect) selectList.getParent();
-        int columnId = 0;
-        final List<TableMetadata> tableMetadata = new ArrayList<>();
-        SqlGenerationHelper.addMetadata(select.getFromClause(), tableMetadata);
-        final List<String> selectListElements = new ArrayList<>(tableMetadata.size());
-        for (final TableMetadata tableMeta : tableMetadata) {
-            for (final ColumnMetadata columnMeta : tableMeta.getColumns()) {
-                if (requiresCast(new SqlColumn(columnId, columnMeta))) {
-                    requiresCast = true;
-                }
-                final SqlColumn sqlColumn = new SqlColumn(columnId, columnMeta);
-                selectListElements.add(buildColumnProjectionString(getJdbcDataType(sqlColumn), super.visit(sqlColumn)));
-                ++columnId;
-            }
-        }
-        return requiresCast ? Optional.of(selectListElements) : Optional.empty();
     }
 
     private boolean requiresCast(final SqlColumn column) {
@@ -393,5 +361,10 @@ public class SQLServerSqlGenerationVisitor extends SqlGenerationVisitor {
             final String function) {
         return "CAST(" + (argumentsSql.get(0) + function + argumentsSql.get(1) + ")") + "as VARCHAR("
                 + MAX_SQLSERVER_VARCHAR_SIZE + ") )";
+    }
+
+    @Override
+    public String visit(final SqlLiteralBool literal) {
+        return literal.getValue() ? "1 = 1" : "1 = 0";
     }
 }
