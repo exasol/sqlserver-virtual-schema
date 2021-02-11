@@ -15,8 +15,6 @@ import com.exasol.adapter.metadata.DataType;
  * This class implements a SQLServer-specific column metadata reader.
  */
 public class SQLServerColumnMetadataReader extends BaseColumnMetadataReader {
-    static final String SQLSERVER_DATE_TYPE_NAME = "date";
-    static final String SQLSERVER_DATETIME2_TYPE_NAME = "datetime2";
     private static final int SQL_SERVER_DATETIME_OFFSET = -155;
 
     /**

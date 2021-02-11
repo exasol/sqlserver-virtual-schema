@@ -1,14 +1,13 @@
 package com.exasol.adapter.dialects.sqlserver;
 
 import java.sql.Types;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.exasol.adapter.AdapterException;
 import com.exasol.adapter.adapternotes.ColumnAdapterNotesJsonConverter;
-import com.exasol.adapter.dialects.*;
+import com.exasol.adapter.dialects.SqlDialect;
 import com.exasol.adapter.dialects.rewriting.*;
-import com.exasol.adapter.metadata.ColumnMetadata;
-import com.exasol.adapter.metadata.TableMetadata;
 import com.exasol.adapter.sql.*;
 
 /**
@@ -17,7 +16,6 @@ import com.exasol.adapter.sql.*;
 public class SQLServerSqlGenerationVisitor extends SqlGenerationVisitor {
     private static final int SQL_SERVER_DATETIME_OFFSET = -155;
     private static final int MAX_SQLSERVER_VARCHAR_SIZE = 8000;
-    private static final List<Integer> REQUIRE_CAST = List.of(SQL_SERVER_DATETIME_OFFSET, Types.TIME);
 
     /**
      * Create a new instance of the {@link SQLServerSqlGenerationVisitor}.
@@ -49,11 +47,6 @@ public class SQLServerSqlGenerationVisitor extends SqlGenerationVisitor {
         } else {
             return projectionString;
         }
-    }
-
-    private boolean requiresCast(final SqlColumn column) {
-        final int typeName = getJdbcDataType(column);
-        return REQUIRE_CAST.contains(typeName);
     }
 
     private int getJdbcDataType(final SqlColumn column) {

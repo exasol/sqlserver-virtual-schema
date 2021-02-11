@@ -1,6 +1,5 @@
 package com.exasol.adapter.dialects.sqlserver;
 
-import static com.exasol.adapter.dialects.sqlserver.IntegrationTestConstants.*;
 import static com.exasol.dbbuilder.dialects.exasol.AdapterScript.Language.JAVA;
 import static com.exasol.matcher.ResultSetMatcher.matchesResultSet;
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
@@ -8,11 +7,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.*;
 import java.nio.file.Path;
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
@@ -31,13 +30,13 @@ import com.exasol.bucketfs.Bucket;
 import com.exasol.bucketfs.BucketAccessException;
 import com.exasol.containers.ExasolContainer;
 import com.exasol.dbbuilder.dialects.exasol.*;
+import com.exasol.matcher.TypeMatchMode;
 
 @Tag("integration")
 @Testcontainers
 class SQLServerSqlDialectIT {
     private static final Logger LOGGER = LoggerFactory.getLogger(SQLServerSqlDialectIT.class);
-    private static final String MS_SQL_SERVER_CONTAINER_NAME = "mcr.microsoft.com/mssql/server:2019-CU6-ubuntu-16.04";
-    private static final String RESOURCES_FOLDER_DIALECT_NAME = "sqlserver";
+    private static final String MS_SQL_SERVER_CONTAINER_NAME = "mcr.microsoft.com/mssql/server:2019-CU8-ubuntu-16.04";
     private static final String SCHEMA_SQL_SERVER = "SCHEMA_SQL_SERVER";
     private static final String TABLE_SQL_SERVER_NUMERIC_AND_DATE_DATA_TYPES = "TABLE_SQL_SERVER_NUMERIC_AND_DATE";
     private static final String TABLE_SQL_SERVER_STRING_DATA_TYPES = "TABLE_SQL_SERVER_STRING";
@@ -45,6 +44,16 @@ class SQLServerSqlDialectIT {
     private static final int MS_SQL_SERVER_PORT = 1433;
     private static final String JDBC_CONNECTION_NAME = "JDBC";
     private static final String VIRTUAL_SCHEMA_JDBC = "VIRTUAL_SCHEMA_JDBC";
+    private static final String JDBC_DRIVER_NAME = "mssql-jdbc.jar";
+    private static final Path JDBC_DRIVER_PATH = Path.of("target/sqlserver-driver/" + JDBC_DRIVER_NAME);
+    public static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "virtual-schema-dist-9.0.1-sqlserver-2.0.0.jar";
+    public static final String EXASOL_DOCKER_IMAGE_REFERENCE = "exasol/docker-db:7.0.6";
+    public static final Path PATH_TO_VIRTUAL_SCHEMAS_JAR = Path.of("target", VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION);
+    public static final String SCHEMA_EXASOL = "SCHEMA_EXASOL";
+    public static final String ADAPTER_SCRIPT_EXASOL = "ADAPTER_SCRIPT_EXASOL";
+    public static final String DOCKER_IP_ADDRESS = "172.17.0.1";
+    public static final String JDBC_DRIVER_CONFIGURATION_FILE_NAME = "settings.cfg";
+
     private static Connection exasolConnection;
 
     @Container
@@ -55,15 +64,10 @@ class SQLServerSqlDialectIT {
             EXASOL_DOCKER_IMAGE_REFERENCE) //
                     .withLogConsumer(new Slf4jLogConsumer(LOGGER)).withReuse(true);
 
-    private Connection getExasolConnection() throws SQLException {
-        return EXASOL_CONTAINER.createConnection("");
-    }
-
     @BeforeAll
     static void beforeAll() throws InterruptedException, BucketAccessException, TimeoutException, SQLException {
-        final String driverName = getPropertyFromFile(RESOURCES_FOLDER_DIALECT_NAME, "driver.name");
-        uploadDriverToBucket(driverName, RESOURCES_FOLDER_DIALECT_NAME, EXASOL_CONTAINER.getDefaultBucket());
-        uploadVsJarToBucket(EXASOL_CONTAINER.getDefaultBucket());
+        uploadDriverToBucket();
+        uploadVsJarToBucket();
         createSqlServerSchema();
         createSimpleTable();
         createSqlServerTableNumericAndDateDataTypes();
@@ -71,7 +75,7 @@ class SQLServerSqlDialectIT {
         exasolConnection = EXASOL_CONTAINER.createConnection("");
         final ExasolObjectFactory exasolFactory = new ExasolObjectFactory(exasolConnection);
         final ExasolSchema exasolSchema = exasolFactory.createSchema(SCHEMA_EXASOL);
-        final AdapterScript adapterScript = createAdapterScript(driverName, exasolSchema);
+        final AdapterScript adapterScript = createAdapterScript(exasolSchema);
         final String connectionString = "jdbc:sqlserver://" + DOCKER_IP_ADDRESS + ":"
                 + MS_SQL_SERVER_CONTAINER.getMappedPort(MS_SQL_SERVER_PORT);
         final ConnectionDefinition connectionDefinition = exasolFactory.createConnectionDefinition(JDBC_CONNECTION_NAME,
@@ -92,50 +96,28 @@ class SQLServerSqlDialectIT {
         }
     }
 
-    private static AdapterScript createAdapterScript(final String driverName, final ExasolSchema schema) {
+    private static AdapterScript createAdapterScript(final ExasolSchema schema) {
         final String content = "%scriptclass com.exasol.adapter.RequestDispatcher;\n" //
                 + "%jar /buckets/bfsdefault/default/" + VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION + ";\n" //
-                + "%jar /buckets/bfsdefault/default/drivers/jdbc/" + driverName + ";\n";
+                + "%jar /buckets/bfsdefault/default/drivers/jdbc/" + JDBC_DRIVER_NAME + ";\n";
         return schema.createAdapterScript(ADAPTER_SCRIPT_EXASOL, JAVA, content);
     }
 
-    private static void uploadDriverToBucket(final String driverName, final String resourcesDialectName,
-            final Bucket bucket) throws InterruptedException, BucketAccessException, TimeoutException {
-        final Path pathToSettingsFile = Path.of("src", "test", "resources", "integration", "driver",
-                resourcesDialectName, JDBC_DRIVER_CONFIGURATION_FILE_NAME);
-        bucket.uploadFile(PATH_TO_VIRTUAL_SCHEMAS_JAR, VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION);
+    private static void uploadDriverToBucket() throws InterruptedException, BucketAccessException, TimeoutException {
+        Bucket bucket = EXASOL_CONTAINER.getDefaultBucket();
+        final Path pathToSettingsFile = Path.of("src", "test", "resources", JDBC_DRIVER_CONFIGURATION_FILE_NAME);
         bucket.uploadFile(pathToSettingsFile, "drivers/jdbc/" + JDBC_DRIVER_CONFIGURATION_FILE_NAME);
-        final String driverPath = getPropertyFromFile(resourcesDialectName, "driver.path");
-        bucket.uploadFile(Path.of(driverPath, driverName), "drivers/jdbc/" + driverName);
+        bucket.uploadFile(JDBC_DRIVER_PATH, "drivers/jdbc/" + JDBC_DRIVER_NAME);
     }
 
-    private static String getPathToPropertyFile(final String resourcesDialectName) {
-        return "src/test/resources/integration/driver/" + resourcesDialectName + "/" + resourcesDialectName
-                + ".properties";
-    }
-
-    private static void uploadVsJarToBucket(final Bucket bucket)
-            throws InterruptedException, BucketAccessException, TimeoutException {
+    private static void uploadVsJarToBucket() throws InterruptedException, BucketAccessException, TimeoutException {
+        Bucket bucket = EXASOL_CONTAINER.getDefaultBucket();
         bucket.uploadFile(PATH_TO_VIRTUAL_SCHEMAS_JAR, VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION);
-    }
-
-    private static String getPropertyFromFile(final String resourcesDialectName, final String propertyName) {
-        final String pathToPropertyFile = getPathToPropertyFile(resourcesDialectName);
-        try (final InputStream inputStream = new FileInputStream(pathToPropertyFile)) {
-            final Properties properties = new Properties();
-            properties.load(inputStream);
-            return properties.getProperty(propertyName);
-        } catch (final IOException e) {
-            throw new IllegalArgumentException(
-                    "Cannot access the properties file or read from it. Check if the path spelling is correct"
-                            + " and if the file exists.");
-        }
     }
 
     private ResultSet getExpectedResultSet(final List<String> expectedColumns, final List<String> expectedRows)
             throws SQLException {
-        final Connection connection = getExasolConnection();
-        try (final Statement statement = connection.createStatement()) {
+        try (final Statement statement = exasolConnection.createStatement()) {
             final String expectedValues = expectedRows.stream().map(row -> "(" + row + ")")
                     .collect(Collectors.joining(","));
             final String qualifiedExpectedTableName = SCHEMA_EXASOL + ".EXPECTED";
@@ -147,15 +129,13 @@ class SQLServerSqlDialectIT {
     }
 
     private ResultSet getActualResultSet(final String query) throws SQLException {
-        final Connection connection = getExasolConnection();
-        try (final Statement statement = connection.createStatement()) {
+        try (final Statement statement = exasolConnection.createStatement()) {
             return statement.executeQuery(query);
         }
     }
 
     private String getExplainVirtualString(final String query) throws SQLException {
-        final Connection connection = getExasolConnection();
-        try (final Statement statement = connection.createStatement()) {
+        try (final Statement statement = exasolConnection.createStatement()) {
             final ResultSet explainVirtual = statement.executeQuery("EXPLAIN VIRTUAL " + query);
             explainVirtual.next();
             return explainVirtual.getString("PUSHDOWN_SQL");
@@ -233,31 +213,19 @@ class SQLServerSqlDialectIT {
     }
 
     @Test
-    void testSelectStar() throws SQLException {
-        final String query = "SELECT * FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE;
-        final ResultSet expected = getExpectedResultSet(
-                List.of("col1 DECIMAL(19)", "col2 VARCHAR(16)", "col3 VARCHAR(100)"), //
-                List.of("-9223372036854775808, '00:00:00.0000000', 'first'", //
-                        "0, '01:02:03.0000000', 'second'", //
-                        "9223372036854775807, '23:59:59.0000000', 'third'"));
-        final String expectedRewrittenQuery = "SELECT [bigint_col], CAST([time_col] as VARCHAR(16)), [varchar_col] FROM";
-        assertAll(() -> assertThat(getActualResultSet(query), matchesResultSet(expected)),
-                () -> assertThat(getExplainVirtualString(query), containsString(expectedRewrittenQuery)));
+    void testSelectStarWithArtificialWhereClauseTrue() {
+        assertVsQuery("SELECT * FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE + " WHERE 1 = 1", //
+                table() //
+                        .row(-9223372036854775808L, "00:00:00.0000000", "first") //
+                        .row(0, "01:02:03.0000000", "second") //
+                        .row(9223372036854775807L, "23:59:59.0000000", "third") //
+                        .matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
     }
 
     @Test
-    void testCount() throws SQLException {
-        final String query = "SELECT COUNT(*) FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE;
-        final ResultSet expected = getExpectedResultSet(List.of("col1 DECIMAL(19)"), List.of("3"));
-        final String expectedRewrittenQuery = "SELECT COUNT_BIG(*) FROM";
-        assertAll(() -> assertThat(getActualResultSet(query), matchesResultSet(expected)),
-                () -> assertThat(getExplainVirtualString(query), containsString(expectedRewrittenQuery)));
-    }
-
-    @Test
-    void testWithArtificialWhereClause() {
-        assertVsQuery("SELECT 1 = 1 FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE, //
-                table().row("1 = 1").matches());
+    void testSelectStarWithArtificialWhereClauseFalse() {
+        assertVsQuery("SELECT * FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE + " WHERE 1 = 0", //
+                table("DECIMAL", "VARCHAR", "VARCHAR").matches());
     }
 
     private void assertVsQuery(final String sql, final Matcher<ResultSet> expected) {
@@ -270,6 +238,15 @@ class SQLServerSqlDialectIT {
 
     protected ResultSet query(final String sql) throws SQLException {
         return exasolConnection.createStatement().executeQuery(sql);
+    }
+
+    @Test
+    void testCount() throws SQLException {
+        final String query = "SELECT COUNT(*) FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE;
+        final ResultSet expected = getExpectedResultSet(List.of("col1 DECIMAL(19)"), List.of("3"));
+        final String expectedRewrittenQuery = "SELECT COUNT_BIG(*) FROM";
+        assertAll(() -> assertThat(getActualResultSet(query), matchesResultSet(expected)),
+                () -> assertThat(getExplainVirtualString(query), containsString(expectedRewrittenQuery)));
     }
 
     @Test

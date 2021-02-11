@@ -2,6 +2,11 @@
 
 Code name: 
 
+## Summary 
+
+The SQL_DIALECT property used when executing a CREATE VIRTUAL SCHEMA from the Exasol database is obsolete from this version. 
+Please, do not provide this property anymore.
+
 ## Bug Fixes
 
 * 4: Fixed boolean literal mapping.

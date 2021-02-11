@@ -1,14 +1,12 @@
 package com.exasol.adapter.dialects.sqlserver;
 
-import static com.exasol.adapter.dialects.VisitorAssertions.assertSqlNodeConvertedToAsterisk;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.exasol.adapter.dialects.rewriting.SqlGenerationContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,7 +16,9 @@ import com.exasol.adapter.AdapterException;
 import com.exasol.adapter.AdapterProperties;
 import com.exasol.adapter.adapternotes.ColumnAdapterNotes;
 import com.exasol.adapter.adapternotes.ColumnAdapterNotesJsonConverter;
-import com.exasol.adapter.dialects.*;
+import com.exasol.adapter.dialects.SqlDialect;
+import com.exasol.adapter.dialects.SqlDialectFactory;
+import com.exasol.adapter.dialects.rewriting.SqlGenerationContext;
 import com.exasol.adapter.metadata.*;
 import com.exasol.adapter.sql.*;
 
