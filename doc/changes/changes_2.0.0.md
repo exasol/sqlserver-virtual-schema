@@ -1,6 +1,6 @@
-# SQL Server Virtual Schema 2.0.0, released 2021-02-??
+# SQL Server Virtual Schema 2.0.0, released 2021-02-12
 
-Code name: 
+Code name: Fixed boolean literal mapping, removed SQL_DIALECT proprty support
 
 ## Summary 
 

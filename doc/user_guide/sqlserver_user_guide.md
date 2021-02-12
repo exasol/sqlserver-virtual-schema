@@ -131,4 +131,4 @@ In the following matrix you find combinations of JDBC driver and dialect version
 
 ## Known Issues
 
-* Select with boolean expressions, such as `SELECT 1 = 1` or `SELECT 1 = 0` won't work with this Virtual Schema because SQL Server doesn't have a boolean data type.
+* Select with boolean expressions, such as `SELECT 1 = 1`, `SELECT 1 = 0` or `SELECT TRUE` won't work with this Virtual Schema because SQL Server doesn't support a boolean data type.
