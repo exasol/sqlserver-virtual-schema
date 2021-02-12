@@ -1,6 +1,6 @@
 # SQL Server Virtual Schema 2.0.0, released 2021-02-12
 
-Code name: Fixed boolean literal mapping, removed SQL_DIALECT proprty support
+Code name: Fixed boolean literal mapping in WHERE clause, removed SQL_DIALECT property support
 
 ## Summary 
 
@@ -9,7 +9,7 @@ Please, do not provide this property anymore.
 
 ## Bug Fixes
 
-* 4: Fixed boolean literal mapping.
+* #4: Fixed boolean literal mapping in WHERE clause.
 
 ## Runtime Dependencies
 
