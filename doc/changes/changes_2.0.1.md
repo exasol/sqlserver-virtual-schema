@@ -20,7 +20,7 @@ In this release we updated the dependencies. By that we fixed transitive CVE-202
 * Updated `com.exasol:hamcrest-resultset-matcher:1.4.0` to `1.4.1`
 * Updated `com.exasol:test-db-builder-java:3.0.0` to `3.2.1`
 * Updated `com.exasol:virtual-schema-common-jdbc:9.0.1` to `9.0.3`
-* Updated `com.microsoft.sqlserver:mssql-jdbc:9.2.0.jre8` to `9.3.1.jre15-preview`
+* Updated `com.microsoft.sqlserver:mssql-jdbc:9.2.0.jre8` to `9.2.1.jre11`
 * Updated `org.junit.jupiter:junit-jupiter:5.7.1` to `5.7.2`
 * Updated `org.mockito:mockito-junit-jupiter:3.7.7` to `3.11.2`
 * Updated `org.testcontainers:junit-jupiter:1.15.1` to `1.16.0`
