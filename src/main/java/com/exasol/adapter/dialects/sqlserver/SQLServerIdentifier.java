@@ -3,6 +3,7 @@ package com.exasol.adapter.dialects.sqlserver;
 import java.util.Objects;
 
 import com.exasol.db.Identifier;
+import com.exasol.errorreporting.ExaError;
 
 /**
  * Represents an identifier in the Sql Server database.
@@ -34,10 +35,12 @@ public class SQLServerIdentifier implements Identifier {
         if (validate(id)) {
             return new SQLServerIdentifier(id);
         } else {
-            throw new AssertionError("E-ID-4: Unable to create identifier \"" + id //
-                    + "\" because it contains illegal characters." //
-                    + " For information about valid identifiers, please refer to" //
-                    + " https://docs.microsoft.com/sql/relational-databases/databases/database-identifiers?view=sql-server-ver15");
+            throw new AssertionError(ExaError.messageBuilder("E-VS-SQLS-3")
+                    .message("E-ID-4: Unable to create identifier \"{{id|uq}}\" because it contains illegal characters."
+                            + " For information about valid identifiers, please refer to"
+                            + " https://docs.microsoft.com/sql/relational-databases/databases/database-identifiers?view=sql-server-ver15",
+                            id)
+                    .toString());
         }
     }
 

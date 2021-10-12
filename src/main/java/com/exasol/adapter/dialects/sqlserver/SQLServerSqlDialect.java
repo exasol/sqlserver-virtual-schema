@@ -19,7 +19,9 @@ import com.exasol.adapter.dialects.*;
 import com.exasol.adapter.dialects.rewriting.ImportIntoTemporaryTableQueryRewriter;
 import com.exasol.adapter.dialects.rewriting.SqlGenerationContext;
 import com.exasol.adapter.jdbc.*;
-import com.exasol.adapter.sql.*;
+import com.exasol.adapter.sql.AggregateFunction;
+import com.exasol.adapter.sql.ScalarFunction;
+import com.exasol.errorreporting.ExaError;
 
 /**
  * This class implements the SqlServer SQL dialect.
@@ -147,9 +149,10 @@ public class SQLServerSqlDialect extends AbstractSqlDialect {
         try {
             return new SQLServerMetadataReader(this.connectionFactory.getConnection(), this.properties);
         } catch (final SQLException exception) {
-            throw new RemoteMetadataReaderException(
-                    "Unable to create SQL Server remote metadata reader. Caused by: " + exception.getMessage(),
-                    exception);
+            throw new RemoteMetadataReaderException(ExaError.messageBuilder("E-VS-SQLS-2")
+                    .message("Unable to create SQL Server remote metadata reader. Caused by: {{cause}}",
+                            exception.getMessage())
+                    .toString(), exception);
         }
     }
 

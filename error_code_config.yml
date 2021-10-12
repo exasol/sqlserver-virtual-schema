@@ -1,4 +1,4 @@
 error-tags:
-  VS-SQLSERVER:
+  VS-SQLS:
     packages:
       - com.exasol.adapter.dialects.sqlserver

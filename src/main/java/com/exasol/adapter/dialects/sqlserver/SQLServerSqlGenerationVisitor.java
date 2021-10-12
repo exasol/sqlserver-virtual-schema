@@ -9,6 +9,7 @@ import com.exasol.adapter.adapternotes.ColumnAdapterNotesJsonConverter;
 import com.exasol.adapter.dialects.SqlDialect;
 import com.exasol.adapter.dialects.rewriting.*;
 import com.exasol.adapter.sql.*;
+import com.exasol.errorreporting.ExaError;
 
 /**
  * This class generates SQL queries for the {@link SQLServerSqlDialect}.
@@ -56,8 +57,9 @@ public class SQLServerSqlGenerationVisitor extends SqlGenerationVisitor {
                     .convertFromJsonToColumnAdapterNotes(column.getMetadata().getAdapterNotes(), column.getName())
                     .getJdbcDataType();
         } catch (final AdapterException exception) {
-            throw new SqlGenerationVisitorException(
-                    "Unable to get a JDBC data type for an sql column " + column.getId());
+            throw new SqlGenerationVisitorException(ExaError.messageBuilder("E-VS-SQLS-1")
+                    .message("Unable to get a JDBC data type for an sql column {{column}}.", column.getId())
+                    .toString());
         }
     }
 
