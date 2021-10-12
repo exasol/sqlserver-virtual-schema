@@ -88,7 +88,7 @@ class SQLServerSqlGenerationVisitorTest {
 
     @CsvSource({ "CURRENT_DATE, CAST(GETDATE() AS DATE)", //
             "CURRENT_TIMESTAMP,  GETDATE()", //
-            "SYSDATE, CAST( SYSDATETIME() AS DATE)", //
+            "SYSDATE, CAST(SYSDATETIME() AS DATE)", //
             "SYSTIMESTAMP, SYSDATETIME()" })
     @ParameterizedTest
     void testVisitSqlFunctionScalarWithoutArguments(final ScalarFunction scalarFunction, final String expected)
@@ -114,40 +114,40 @@ class SQLServerSqlGenerationVisitorTest {
 
     @CsvSource(value = { "ST_X : 'left'.STX", //
             "ST_Y : 'left'.STY", //
-            "ST_ENDPOINT : CAST('left'.STEndPoint()as VARCHAR(8000) )", //
+            "ST_ENDPOINT : CAST('left'.STEndPoint() AS VARCHAR(8000))", //
             "ST_ISCLOSED : 'left'.STIsClosed()", //
             "ST_ISRING : 'left'.STIsRing()", //
             "ST_LENGTH : 'left'.STLength()", //
             "ST_NUMPOINTS : 'left'.STNumPoints()", //
-            "ST_POINTN : CAST('left'.STPointN('right')as VARCHAR(8000) )", //
-            "ST_STARTPOINT : CAST('left'.STStartPoint()as VARCHAR(8000) )", //
+            "ST_POINTN : CAST('left'.STPointN('right') AS VARCHAR(8000))", //
+            "ST_STARTPOINT : CAST('left'.STStartPoint() AS VARCHAR(8000))", //
             "ST_AREA : 'left'.STArea()", //
-            "ST_EXTERIORRING : CAST('left'.STExteriorRing()as VARCHAR(8000) )", //
-            "ST_INTERIORRINGN : CAST('left'.STInteriorRingN ('right')as VARCHAR(8000) )", //
+            "ST_EXTERIORRING : CAST('left'.STExteriorRing() AS VARCHAR(8000))", //
+            "ST_INTERIORRINGN : CAST('left'.STInteriorRingN ('right') AS VARCHAR(8000))", //
             "ST_NUMINTERIORRINGS : 'left'.STNumInteriorRing()", //
-            "ST_GEOMETRYN : CAST('left'.STGeometryN('right')as VARCHAR(8000) )", //
+            "ST_GEOMETRYN : CAST('left'.STGeometryN('right') AS VARCHAR(8000))", //
             "ST_NUMGEOMETRIES : 'left'.STNumGeometries()", //
-            "ST_BOUNDARY : CAST('left'.STBoundary()as VARCHAR(8000) )", //
-            "ST_BUFFER : CAST('left'.STBuffer('right')as VARCHAR(8000) )", //
-            "ST_CENTROID : CAST('left'.STCentroid()as VARCHAR(8000) )", //
+            "ST_BOUNDARY : CAST('left'.STBoundary() AS VARCHAR(8000))", //
+            "ST_BUFFER : CAST('left'.STBuffer('right') AS VARCHAR(8000))", //
+            "ST_CENTROID : CAST('left'.STCentroid() AS VARCHAR(8000))", //
             "ST_CONTAINS : 'left'.STContains('right')", //
-            "ST_CONVEXHULL : CAST('left'.STConvexHull()as VARCHAR(8000) )", //
+            "ST_CONVEXHULL : CAST('left'.STConvexHull() AS VARCHAR(8000))", //
             "ST_CROSSES : 'left'.STCrosses('right')", //
-            "ST_DIFFERENCE : CAST('left'.STDifference('right')as VARCHAR(8000) )", //
+            "ST_DIFFERENCE : CAST('left'.STDifference('right') AS VARCHAR(8000))", //
             "ST_DIMENSION : 'left'.STDimension()", //
-            "ST_DISJOINT : CAST('left'.STDisjoint('right')as VARCHAR(8000) )", //
+            "ST_DISJOINT : CAST('left'.STDisjoint('right') AS VARCHAR(8000))", //
             "ST_DISTANCE : 'left'.STDistance('right')", //
-            "ST_ENVELOPE : CAST('left'.STEnvelope()as VARCHAR(8000) )", //
+            "ST_ENVELOPE : CAST('left'.STEnvelope() AS VARCHAR(8000))", //
             "ST_EQUALS : 'left'.STEquals('right')", //
             "ST_GEOMETRYTYPE : 'left'.STGeometryType()", //
-            "ST_INTERSECTION : CAST('left'.STIntersection('right')as VARCHAR(8000) )", //
+            "ST_INTERSECTION : CAST('left'.STIntersection('right') AS VARCHAR(8000))", //
             "ST_INTERSECTS : 'left'.STIntersects('right')", //
             "ST_ISEMPTY : 'left'.STIsEmpty()", //
             "ST_ISSIMPLE : 'left'.STIsSimple()", //
             "ST_OVERLAPS : 'left'.STOverlaps('right')", //
-            "ST_SYMDIFFERENCE : CAST('left'.STSymDifference ('right')as VARCHAR(8000) )", //
+            "ST_SYMDIFFERENCE : CAST('left'.STSymDifference ('right') AS VARCHAR(8000))", //
             "ST_TOUCHES : 'left'.STTouches('right')", //
-            "ST_UNION : CAST('left'.STUnion('right')as VARCHAR(8000) )", //
+            "ST_UNION : CAST('left'.STUnion('right') AS VARCHAR(8000))", //
             "ST_WITHIN : 'left'.STWithin('right')", //
             "BIT_AND : 'left' & '" + "" + "right'", //
             "BIT_OR : 'left' | 'right'", //

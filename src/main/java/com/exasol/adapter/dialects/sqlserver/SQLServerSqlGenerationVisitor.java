@@ -42,12 +42,16 @@ public class SQLServerSqlGenerationVisitor extends SqlGenerationVisitor {
 
     private String buildColumnProjectionString(final int jdbcDataType, final String projectionString) {
         if (jdbcDataType == Types.TIME) {
-            return "CAST(" + projectionString + " as VARCHAR(16))";
+            return renderCast(projectionString, "VARCHAR(16)");
         } else if (jdbcDataType == SQL_SERVER_DATETIME_OFFSET) {
-            return "CAST(" + projectionString + " as VARCHAR(34))";
+            return renderCast(projectionString, "VARCHAR(34)");
         } else {
             return projectionString;
         }
+    }
+
+    private String renderCast(final String input, final String as) {
+        return "CAST(" + input + " AS " + as + ")";
     }
 
     private int getJdbcDataType(final SqlColumn column) {
@@ -124,11 +128,11 @@ public class SQLServerSqlGenerationVisitor extends SqlGenerationVisitor {
         case YEARS_BETWEEN:
             return getDateTimeBetween(function, argumentsSql);
         case CURRENT_DATE:
-            return "CAST(GETDATE() AS DATE)";
+            return renderCast("GETDATE()", "DATE");
         case CURRENT_TIMESTAMP:
             return "GETDATE()";
         case SYSDATE:
-            return "CAST( SYSDATETIME() AS DATE)";
+            return renderCast("SYSDATETIME()", "DATE");
         case SYSTIMESTAMP:
             return "SYSDATETIME()";
         case ST_X:
@@ -349,13 +353,13 @@ public class SQLServerSqlGenerationVisitor extends SqlGenerationVisitor {
     }
 
     private String getScalarFunctionWithVarcharCast(final List<String> argumentsSql, final String function) {
-        return "CAST(" + argumentsSql.get(0) + function + "as VARCHAR(" + MAX_SQLSERVER_VARCHAR_SIZE + ") )";
+        return renderCast(argumentsSql.get(0) + function, "VARCHAR(" + MAX_SQLSERVER_VARCHAR_SIZE + ")");
     }
 
     private String getScalarFunctionWithVarcharCastTwoArguments(final List<String> argumentsSql,
             final String function) {
-        return "CAST(" + (argumentsSql.get(0) + function + argumentsSql.get(1) + ")") + "as VARCHAR("
-                + MAX_SQLSERVER_VARCHAR_SIZE + ") )";
+        return renderCast(argumentsSql.get(0) + function + argumentsSql.get(1) + ")",
+                "VARCHAR(" + MAX_SQLSERVER_VARCHAR_SIZE + ")");
     }
 
     @Override

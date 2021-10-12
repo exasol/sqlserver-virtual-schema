@@ -12,7 +12,7 @@ Code name: Unified Error Codes
 
 * Updated `com.exasol:exasol-testcontainers:4.0.0` to `5.1.0`
 * Updated `com.exasol:hamcrest-resultset-matcher:1.4.1` to `1.5.0`
-* Updated `com.microsoft.sqlserver:mssql-jdbc:9.2.1.jre8` to `9.4.0.jre16`
+* Updated `com.microsoft.sqlserver:mssql-jdbc:9.2.1.jre8` to `9.4.0.jre8`
 * Updated `org.junit.jupiter:junit-jupiter:5.7.2` to `5.8.1`
 * Updated `org.mockito:mockito-junit-jupiter:3.11.2` to `4.0.0`
 

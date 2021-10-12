@@ -100,7 +100,7 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>9.4.0.jre16</version>
+            <version>9.4.0.jre8</version>
             <scope>test</scope>
         </dependency>
         <dependency>
