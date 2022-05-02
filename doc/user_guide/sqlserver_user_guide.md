@@ -124,8 +124,8 @@ XML                 |  ×        |                           |
 
 In the following matrix you find combinations of JDBC driver and dialect version that we tested.
 
-| Virtual Schema Version | SQL SERVER Version    | Driver Name       | Driver Version |
-|------------------------|-----------------------|-------------------|----------------|
+| Virtual Schema Version | SQL SERVER Version     | Driver Name       | Driver Version |
+|------------------------|------------------------|-------------------|----------------|
 | Latest                 | 2019-CU15-ubuntu-20.04 | MS SQL JDBC JRE 8 | 9.4.1          |
 
 
