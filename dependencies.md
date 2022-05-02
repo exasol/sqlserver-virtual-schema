@@ -21,7 +21,7 @@
 | [Testcontainers :: JUnit Jupiter Extension][16] | [MIT][17]                         |
 | [Microsoft JDBC Driver for SQL Server][18]      | [MIT License][19]                 |
 | [Testcontainers :: MS SQL Server][16]           | [MIT][17]                         |
-| [Test Database Builder for Java][22]            | [MIT][1]                          |
+| [Test Database Builder for Java][22]            | [MIT License][23]                 |
 | [Matcher for SQL Result Sets][24]               | [MIT][1]                          |
 
 ## Plugin Dependencies
@@ -48,25 +48,26 @@
 | [Maven Deploy Plugin][60]                               | [The Apache Software License, Version 2.0][45] |
 | [Maven Site Plugin 3][62]                               | [The Apache Software License, Version 2.0][45] |
 
-[26]: https://www.eclemma.org/jacoco/index.html
 [42]: https://github.com/exasol/project-keeper-maven-plugin
 [4]: https://github.com/exasol/error-reporting-java
 [2]: https://github.com/exasol/db-fundamentals-java
+[22]: https://github.com/exasol/test-db-builder-java/
 [45]: http://www.apache.org/licenses/LICENSE-2.0.txt
 [28]: https://maven.apache.org/surefire/maven-surefire-plugin/
 [54]: http://maven.apache.org/plugins/maven-clean-plugin/
 [1]: https://opensource.org/licenses/MIT
 [12]: https://github.com/mockito/mockito
 [34]: https://maven.apache.org/surefire/maven-failsafe-plugin/
-[22]: https://github.com/exasol/test-db-builder-java
 [38]: http://www.mojohaus.org/versions-maven-plugin/
 [46]: http://maven.apache.org/plugins/maven-dependency-plugin/
 [9]: http://opensource.org/licenses/BSD-3-Clause
 [30]: https://maven.apache.org/plugins/maven-compiler-plugin/
 [17]: http://opensource.org/licenses/MIT
 [0]: https://github.com/exasol/virtual-schema-common-jdbc
+[23]: https://github.com/exasol/test-db-builder-java/blob/main/LICENSE
 [27]: https://www.eclipse.org/legal/epl-2.0/
 [14]: https://github.com/exasol/exasol-testcontainers
+[26]: https://www.jacoco.org/jacoco/trunk/doc/maven.html
 [13]: https://github.com/mockito/mockito/blob/main/LICENSE
 [24]: https://github.com/exasol/hamcrest-resultset-matcher
 [50]: http://zlika.github.io/reproducible-build-maven-plugin
