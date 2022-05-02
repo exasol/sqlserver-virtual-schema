@@ -19,12 +19,12 @@ Now register the driver in EXAOperation:
 
 You need to specify the following settings when adding the JDBC driver via EXAOperation.
 
-| Parameter | Value                                               |
-|-----------|-----------------------------------------------------|
-| Name      | `SQLSERVER`                                        |
-| Main      | `com.microsoft.sqlserver.jdbc.SQLServerDriver`|
-| Prefix    | `jdbc:sqlserver:`                                 |
-| Files     | `mssql-jdbc-<version>.jre8.jar`                 |
+| Parameter | Value                                          |
+|-----------|------------------------------------------------|
+| Name      | `SQLSERVER`                                    |
+| Main      | `com.microsoft.sqlserver.jdbc.SQLServerDriver` |
+| Prefix    | `jdbc:sqlserver:`                              |
+| Files     | `mssql-jdbc-<version>.jre8.jar`                |
 
 ## Uploading the JDBC Driver to EXAOperation
 
@@ -126,7 +126,7 @@ In the following matrix you find combinations of JDBC driver and dialect version
 
 | Virtual Schema Version | SQL SERVER Version    | Driver Name       | Driver Version |
 |------------------------|-----------------------|-------------------|----------------|
-| Latest                 | 2019-CU8-ubuntu-16.04 | MS SQL JDBC JRE 8 | 9.0.2          |
+| Latest                 | 2019-CU15-ubuntu-20.04 | MS SQL JDBC JRE 8 | 9.4.1          |
 
 
 ## Known Issues
