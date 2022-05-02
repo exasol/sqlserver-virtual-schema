@@ -36,7 +36,7 @@ This release upgrades dependencies and reduces the number of runtime dependencie
 * Updated `org.apache.maven.plugins:maven-compiler-plugin:3.8.1` to `3.9.0`
 * Updated `org.apache.maven.plugins:maven-dependency-plugin:2.8` to `3.3.0`
 * Updated `org.apache.maven.plugins:maven-enforcer-plugin:3.0.0-M3` to `3.0.0`
-* Updated `org.apache.maven.plugins:maven-failsafe-plugin:3.0.0-M3` to `3.0.0-M5`
+* Updated `org.apache.maven.plugins:maven-failsafe-plugin:3.0.0-M3` to `3.0.0-M6`
 * Updated `org.apache.maven.plugins:maven-surefire-plugin:3.0.0-M3` to `3.0.0-M5`
 * Added `org.codehaus.mojo:flatten-maven-plugin:1.2.7`
 * Updated `org.jacoco:jacoco-maven-plugin:0.8.6` to `0.8.7`
