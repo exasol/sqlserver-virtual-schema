@@ -2,3 +2,4 @@ error-tags:
   VS-SQLS:
     packages:
       - com.exasol.adapter.dialects.sqlserver
+    highest-index: 3
