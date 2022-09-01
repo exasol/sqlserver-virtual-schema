@@ -1,5 +1,5 @@
 error-tags:
-  VS-SQLS:
+  VSSQLS:
     packages:
       - com.exasol.adapter.dialects.sqlserver
     highest-index: 3
