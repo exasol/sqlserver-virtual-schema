@@ -6,20 +6,10 @@
     <version>2.0.3</version>
     <name>Virtual Schema for SQLServer</name>
     <description>Abstraction layer that makes an external Microsoft SQL Server database accessible from an Exasol database through regular SQL commands</description>
-    <distributionManagement>
-        <repository>
-            <id>maven.exasol.com</id>
-            <url>https://maven.exasol.com/artifactory/exasol-releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>maven.exasol.com</id>
-            <url>https://maven.exasol.com/artifactory/exasol-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+    <url>https://github.com/exasol/sqlserver-virtual-schema/</url>
     <properties>
         <vscjdbc.version>9.0.4</vscjdbc.version>
         <org.testcontainers.version>1.17.1</org.testcontainers.version>
-        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
     <repositories>
         <repository>
@@ -122,15 +112,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M6</version>
                 <configuration>
-                    <forkCount>0</forkCount>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.3.0</version>
                 <configuration>
                     <finalName>virtual-schema-dist-${vscjdbc.version}-sqlserver-${project.version}</finalName>
                 </configuration>
@@ -138,7 +125,6 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>artifact-reference-checker-maven-plugin</artifactId>
-                <version>0.4.1</version>
                 <configuration>
                     <excludes>
                         <exclude>/doc/changes/*</exclude>
@@ -163,19 +149,6 @@
                 <version>3.3.0</version>
                 <executions>
                     <execution>
-                        <id>copy-jacoco</id>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <phase>test</phase>
-                        <configuration>
-                            <includeArtifactIds>org.jacoco.agent</includeArtifactIds>
-                            <includeClassifiers>runtime</includeClassifiers>
-                            <outputDirectory>${project.build.directory}/jacoco-agent</outputDirectory>
-                            <stripVersion>true</stripVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>copy-sqlserver-driver</id>
                         <goals>
                             <goal>copy-dependencies</goal>
@@ -191,57 +164,7 @@
                 </executions>
             </plugin>
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M6</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.8</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.10.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.10.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.sonatype.ossindex.maven</groupId>
-                    <artifactId>ossindex-maven-plugin</artifactId>
-                    <version>3.2.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>com.exasol</groupId>
-                    <artifactId>error-code-crawler-maven-plugin</artifactId>
-                    <version>1.1.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>io.github.zlika</groupId>
-                    <artifactId>reproducible-build-maven-plugin</artifactId>
-                    <version>0.15</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.2</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
-    <url>https://github.com/exasol/sqlserver-virtual-schema/</url>
     <parent>
         <artifactId>sqlserver-virtual-schema-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
