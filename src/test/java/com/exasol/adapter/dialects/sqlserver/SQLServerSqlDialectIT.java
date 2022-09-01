@@ -14,13 +14,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.MSSQLServerContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;

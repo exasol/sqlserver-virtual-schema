@@ -7,10 +7,16 @@ on:
     branches:
       - main
   pull_request:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   linkChecker:
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
@@ -24,4 +30,5 @@ jobs:
         with:
           use-quiet-mode: 'yes'
           use-verbose-mode: 'yes'
+          config-file: ./target/broken_links_checker.json
           config-file: ./target/broken_links_checker.json

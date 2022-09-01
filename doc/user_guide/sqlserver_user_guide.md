@@ -80,7 +80,7 @@ Please, do not forget to specify the `SCHEMA_NAME` property.
 
 Provide the SQL server's database name using one of the suggested ways:
 1. Via the `CATALOG_NAME` property;
-1. Via connection string definition: 'jdbc:sqlserver://<server name>:<port>/<database name>';
+1. Via connection string definition: `jdbc:sqlserver://<server name>:<port>/<database name>`;
 
 ## Data Types Conversion
 
