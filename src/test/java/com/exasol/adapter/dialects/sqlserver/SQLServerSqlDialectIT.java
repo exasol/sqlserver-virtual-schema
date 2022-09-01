@@ -37,7 +37,7 @@ import com.exasol.matcher.TypeMatchMode;
 @Testcontainers
 class SQLServerSqlDialectIT {
     private static final Logger LOGGER = LoggerFactory.getLogger(SQLServerSqlDialectIT.class);
-    private static final String MS_SQL_SERVER_CONTAINER_NAME = "mcr.microsoft.com/mssql/server:2019-CU15-ubuntu-20.04";
+    private static final String MS_SQL_SERVER_CONTAINER_NAME = "mcr.microsoft.com/mssql/server:2019-CU17-ubuntu-20.04";
     private static final String SCHEMA_SQL_SERVER = "SCHEMA_SQL_SERVER";
     private static final String TABLE_SQL_SERVER_NUMERIC_AND_DATE_DATA_TYPES = "TABLE_SQL_SERVER_NUMERIC_AND_DATE";
     private static final String TABLE_SQL_SERVER_STRING_DATA_TYPES = "TABLE_SQL_SERVER_STRING";
@@ -48,7 +48,7 @@ class SQLServerSqlDialectIT {
     private static final String JDBC_DRIVER_NAME = "mssql-jdbc.jar";
     private static final Path JDBC_DRIVER_PATH = Path.of("target/sqlserver-driver/" + JDBC_DRIVER_NAME);
     public static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "virtual-schema-dist-9.0.5-sqlserver-2.0.3.jar";
-    public static final String EXASOL_DOCKER_IMAGE_REFERENCE = "exasol/docker-db:7.1.9";
+    public static final String EXASOL_DOCKER_IMAGE_REFERENCE = "exasol/docker-db:7.1.13";
     public static final Path PATH_TO_VIRTUAL_SCHEMAS_JAR = Path.of("target", VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION);
     public static final String SCHEMA_EXASOL = "SCHEMA_EXASOL";
     public static final String ADAPTER_SCRIPT_EXASOL = "ADAPTER_SCRIPT_EXASOL";
@@ -58,7 +58,7 @@ class SQLServerSqlDialectIT {
     private static Connection exasolConnection;
 
     @Container
-    private static final MSSQLServerContainer MS_SQL_SERVER_CONTAINER = new MSSQLServerContainer(
+    private static final MSSQLServerContainer<?> MS_SQL_SERVER_CONTAINER = new MSSQLServerContainer<>(
             MS_SQL_SERVER_CONTAINER_NAME);
     @Container
     private static final ExasolContainer<? extends ExasolContainer<?>> EXASOL_CONTAINER = new ExasolContainer<>(
