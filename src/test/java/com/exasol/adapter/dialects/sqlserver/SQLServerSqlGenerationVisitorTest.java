@@ -2,6 +2,8 @@ package com.exasol.adapter.dialects.sqlserver;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -19,8 +21,11 @@ import com.exasol.adapter.adapternotes.ColumnAdapterNotesJsonConverter;
 import com.exasol.adapter.dialects.SqlDialect;
 import com.exasol.adapter.dialects.SqlDialectFactory;
 import com.exasol.adapter.dialects.rewriting.SqlGenerationContext;
+import com.exasol.adapter.dialects.rewriting.SqlGenerationVisitorException;
 import com.exasol.adapter.metadata.*;
 import com.exasol.adapter.sql.*;
+
+import jakarta.json.stream.JsonParsingException;
 
 class SQLServerSqlGenerationVisitorTest {
     private SQLServerSqlGenerationVisitor visitor;
@@ -235,5 +240,16 @@ class SQLServerSqlGenerationVisitorTest {
     @Test
     void testVisitLiteralBoolFalse() {
         assertThat(this.visitor.visit(new SqlLiteralBool(false)), equalTo("1 = 0"));
+    }
+
+    @Test
+    void testVisitColumn() throws AdapterException {
+        final SqlColumn column = new SqlColumn(0,
+                ColumnMetadata.builder().name("col1").type(DataType.createBool()).adapterNotes("invalidJson").build());
+        column.setParent(SqlSelectList.createRegularSelectList(List.of(column)));
+        final SqlGenerationVisitorException exception = assertThrows(SqlGenerationVisitorException.class,
+                () -> this.visitor.visit(column));
+        assertThat(exception.getMessage(), equalTo("E-VSSQLS-1: Unable to get a JDBC data type for an sql column 0."));
+        assertThat(exception.getCause().getCause(), instanceOf(JsonParsingException.class));
     }
 }

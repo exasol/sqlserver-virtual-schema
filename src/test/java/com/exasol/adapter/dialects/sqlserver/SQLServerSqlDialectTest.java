@@ -14,7 +14,9 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 import org.hamcrest.CoreMatchers;
@@ -33,6 +35,7 @@ import com.exasol.adapter.capabilities.Capabilities;
 import com.exasol.adapter.dialects.PropertyValidationException;
 import com.exasol.adapter.dialects.SqlDialect;
 import com.exasol.adapter.jdbc.ConnectionFactory;
+import com.exasol.adapter.jdbc.RemoteMetadataReaderException;
 import com.exasol.adapter.sql.AggregateFunction;
 import com.exasol.adapter.sql.ScalarFunction;
 
@@ -82,8 +85,22 @@ class SQLServerSqlDialectTest {
     }
 
     @Test
+    void testGetName() {
+        assertThat(this.dialect.getName(), equalTo("SQLSERVER"));
+    }
+
+    @Test
     void testMetadataReaderClass() {
         assertThat(this.dialect.createRemoteMetadataReader(), instanceOf(SQLServerMetadataReader.class));
+    }
+
+    @Test
+    void testCreateMetadataReaderFails() throws SQLException {
+        when(connectionFactoryMock.getConnection()).thenThrow(new SQLException("mock"));
+        final RemoteMetadataReaderException exception = assertThrows(RemoteMetadataReaderException.class,
+                dialect::createRemoteMetadataReader);
+        assertThat(exception.getMessage(),
+                equalTo("E-VSSQLS-2: Unable to create SQL Server remote metadata reader. Caused by: 'mock'"));
     }
 
     @Test

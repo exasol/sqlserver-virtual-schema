@@ -149,7 +149,7 @@ public class SQLServerSqlDialect extends AbstractSqlDialect {
         try {
             return new SQLServerMetadataReader(this.connectionFactory.getConnection(), this.properties);
         } catch (final SQLException exception) {
-            throw new RemoteMetadataReaderException(ExaError.messageBuilder("E-VS-SQLS-2")
+            throw new RemoteMetadataReaderException(ExaError.messageBuilder("E-VSSQLS-2")
                     .message("Unable to create SQL Server remote metadata reader. Caused by: {{cause}}",
                             exception.getMessage())
                     .toString(), exception);
