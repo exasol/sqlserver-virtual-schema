@@ -1,13 +1,3 @@
 release-platforms:
   - GitHub
-  - Community
-  - Jira
-community-tags:
-  - Virtual Schema
-  - Exasol
-  - Open Source
-  - GitHub
-  - SqlServer
-community-project-name: SQLServer Virtual Schema
-community-project-description: |
-  This Virtual Schema provides an abstraction layer that makes an external [Microsoft SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-2017) database accessible from an Exasol database through regular SQL commands. The contents of the external Microsoft SQL Server database are mapped to virtual tables which look like and can be queried as any regular Exasol table.
+language: Java
