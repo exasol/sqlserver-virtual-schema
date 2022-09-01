@@ -62,8 +62,8 @@ public class SQLServerSqlGenerationVisitor extends SqlGenerationVisitor {
                     .getJdbcDataType();
         } catch (final AdapterException exception) {
             throw new SqlGenerationVisitorException(ExaError.messageBuilder("E-VSSQLS-1")
-                    .message("Unable to get a JDBC data type for an sql column {{column}}.", column.getId())
-                    .toString());
+                    .message("Unable to get a JDBC data type for an sql column {{column}}.", column.getId()).toString(),
+                    exception);
         }
     }
 
