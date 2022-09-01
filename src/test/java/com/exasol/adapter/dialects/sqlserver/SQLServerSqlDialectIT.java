@@ -63,7 +63,7 @@ class SQLServerSqlDialectIT {
     @Container
     private static final ExasolContainer<? extends ExasolContainer<?>> EXASOL_CONTAINER = new ExasolContainer<>(
             EXASOL_DOCKER_IMAGE_REFERENCE) //
-                    .withLogConsumer(new Slf4jLogConsumer(LOGGER)).withReuse(true);
+            .withLogConsumer(new Slf4jLogConsumer(LOGGER)).withReuse(true);
 
     @BeforeAll
     static void beforeAll() throws BucketAccessException, TimeoutException, SQLException, FileNotFoundException {
@@ -78,7 +78,7 @@ class SQLServerSqlDialectIT {
         final ExasolSchema exasolSchema = exasolFactory.createSchema(SCHEMA_EXASOL);
         final AdapterScript adapterScript = createAdapterScript(exasolSchema);
         final String connectionString = "jdbc:sqlserver://" + DOCKER_IP_ADDRESS + ":"
-                + MS_SQL_SERVER_CONTAINER.getMappedPort(MS_SQL_SERVER_PORT);
+                + MS_SQL_SERVER_CONTAINER.getMappedPort(MS_SQL_SERVER_PORT) + ";trustServerCertificate=true";
         final ConnectionDefinition connectionDefinition = exasolFactory.createConnectionDefinition(JDBC_CONNECTION_NAME,
                 connectionString, MS_SQL_SERVER_CONTAINER.getUsername(), MS_SQL_SERVER_CONTAINER.getPassword());
         exasolFactory.createVirtualSchemaBuilder(VIRTUAL_SCHEMA_JDBC).adapterScript(adapterScript)

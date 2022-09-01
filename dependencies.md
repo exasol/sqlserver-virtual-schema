@@ -43,7 +43,7 @@
 | [error-code-crawler-maven-plugin][38]                   | [MIT License][39]                              |
 | [Reproducible Build Maven Plugin][40]                   | [Apache 2.0][28]                               |
 | [Project keeper maven plugin][41]                       | [The MIT License][42]                          |
-| [Apache Maven Dependency Plugin][43]                    | [Apache License, Version 2.0][25]              |
+| [Maven Dependency Plugin][43]                           | [The Apache Software License, Version 2.0][28] |
 | [Maven Clean Plugin][44]                                | [The Apache Software License, Version 2.0][28] |
 | [Maven Resources Plugin][45]                            | [The Apache Software License, Version 2.0][28] |
 | [Maven Install Plugin][46]                              | [The Apache Software License, Version 2.0][28] |
@@ -93,7 +93,7 @@
 [40]: http://zlika.github.io/reproducible-build-maven-plugin
 [41]: https://github.com/exasol/project-keeper/
 [42]: https://github.com/exasol/project-keeper/blob/main/LICENSE
-[43]: https://maven.apache.org/plugins/maven-dependency-plugin/
+[43]: http://maven.apache.org/plugins/maven-dependency-plugin/
 [44]: http://maven.apache.org/plugins/maven-clean-plugin/
 [45]: http://maven.apache.org/plugins/maven-resources-plugin/
 [46]: http://maven.apache.org/plugins/maven-install-plugin/

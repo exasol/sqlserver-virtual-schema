@@ -126,7 +126,7 @@ In the following matrix you find combinations of JDBC driver and dialect version
 
 | Virtual Schema Version | SQL SERVER Version     | Driver Name       | Driver Version |
 |------------------------|------------------------|-------------------|----------------|
-| Latest                 | 2019-CU17-ubuntu-20.04 | MS SQL JDBC JRE 8 | 9.4.1          |
+| Latest                 | 2019-CU17-ubuntu-20.04 | MS SQL JDBC JRE 8 | 11.2.0.jre8    |
 
 
 ## Known Issues
