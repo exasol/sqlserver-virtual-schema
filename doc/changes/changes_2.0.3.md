@@ -23,7 +23,7 @@ This release upgrades dependencies and reduces the number of runtime dependencie
 * Updated `com.exasol:hamcrest-resultset-matcher:1.5.0` to `1.5.2`
 * Updated `com.exasol:test-db-builder-java:3.2.1` to `3.4.0`
 * Updated `com.exasol:virtual-schema-common-jdbc:9.0.3` to `10.0.1`
-* Updated `com.microsoft.sqlserver:mssql-jdbc:9.4.0.jre8` to `11.2.1.jre18`
+* Updated `com.microsoft.sqlserver:mssql-jdbc:9.4.0.jre8` to `11.2.1.jre8`
 * Updated `org.junit.jupiter:junit-jupiter:5.8.1` to `5.9.1`
 * Updated `org.mockito:mockito-junit-jupiter:4.0.0` to `4.8.1`
 * Updated `org.testcontainers:junit-jupiter:1.16.0` to `1.17.5`
