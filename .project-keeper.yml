@@ -4,3 +4,5 @@ sources:
     modules:
       - jar_artifact
       - integration_tests
+linkReplacements:
+  - https://www.microsoft.com/en-us/sql-server/sql-server-2017|https://www.microsoft.com/en-us/sql-server
