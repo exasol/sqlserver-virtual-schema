@@ -1,4 +1,4 @@
-# Virtual Schema for SQLServer 2.0.3, released 2022-??-??
+# Virtual Schema for SQLServer 2.0.3, released 2022-10-24
 
 Code name: 2.0.3: Upgrade dependencies
 
