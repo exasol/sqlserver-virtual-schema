@@ -32,10 +32,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.exasol.adapter.AdapterProperties;
 import com.exasol.adapter.capabilities.Capabilities;
-import com.exasol.adapter.dialects.PropertyValidationException;
 import com.exasol.adapter.dialects.SqlDialect;
 import com.exasol.adapter.jdbc.ConnectionFactory;
 import com.exasol.adapter.jdbc.RemoteMetadataReaderException;
+import com.exasol.adapter.properties.PropertyValidationException;
 import com.exasol.adapter.sql.AggregateFunction;
 import com.exasol.adapter.sql.ScalarFunction;
 
@@ -96,9 +96,9 @@ class SQLServerSqlDialectTest {
 
     @Test
     void testCreateMetadataReaderFails() throws SQLException {
-        when(connectionFactoryMock.getConnection()).thenThrow(new SQLException("mock"));
+        when(this.connectionFactoryMock.getConnection()).thenThrow(new SQLException("mock"));
         final RemoteMetadataReaderException exception = assertThrows(RemoteMetadataReaderException.class,
-                dialect::createRemoteMetadataReader);
+                this.dialect::createRemoteMetadataReader);
         assertThat(exception.getMessage(),
                 equalTo("E-VSSQLS-2: Unable to create SQL Server remote metadata reader. Caused by: 'mock'"));
     }
