@@ -1,4 +1,4 @@
-# Virtual Schema for SQLServer 2.1.0, released 2023-??-??
+# Virtual Schema for SQLServer 2.1.0, released 2023-03-13
 
 Code name: Dependency Upgrade on Top of 2.0.3
 
@@ -24,7 +24,6 @@ Updated dependencies to replace `com.exasol:exasol-script-api` by `udf-api-java/
 * Updated `com.exasol:exasol-testcontainers:6.2.0` to `6.5.1`
 * Updated `com.exasol:test-db-builder-java:3.4.0` to `3.4.2`
 * Updated `com.exasol:virtual-schema-common-jdbc:10.0.1` to `10.4.0`
-* Updated `com.microsoft.sqlserver:mssql-jdbc:11.2.1.jre8` to `12.2.0.jre11`
 * Updated `org.junit.jupiter:junit-jupiter:5.9.1` to `5.9.2`
 * Updated `org.mockito:mockito-junit-jupiter:4.8.1` to `5.2.0`
 * Updated `org.testcontainers:junit-jupiter:1.17.5` to `1.17.6`
