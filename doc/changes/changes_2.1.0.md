@@ -10,8 +10,6 @@ Updated dependencies to replace `com.exasol:exasol-script-api` by `udf-api-java/
 
 * #19: Updated dependencies
 
-* ISSUE_NUMBER: description
-
 ## Dependency Updates
 
 ### Compile Dependency Updates
