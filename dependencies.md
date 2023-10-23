@@ -16,7 +16,7 @@
 | [Virtual Schema Common JDBC][0]                 | [MIT License][1]                 |
 | [Hamcrest][6]                                   | [BSD License 3][7]               |
 | [JUnit Jupiter (Aggregator)][8]                 | [Eclipse Public License v2.0][9] |
-| [mockito-junit-jupiter][10]                     | [The MIT License][11]            |
+| [mockito-junit-jupiter][10]                     | [MIT][11]                        |
 | [Test containers for Exasol on Docker][12]      | [MIT License][13]                |
 | [Testcontainers :: JUnit Jupiter Extension][14] | [MIT][15]                        |
 | [Microsoft JDBC Driver for SQL Server][16]      | [MIT License][17]                |
@@ -65,7 +65,7 @@
 [11]: https://github.com/mockito/mockito/blob/main/LICENSE
 [12]: https://github.com/exasol/exasol-testcontainers/
 [13]: https://github.com/exasol/exasol-testcontainers/blob/main/LICENSE
-[14]: https://testcontainers.org
+[14]: https://java.testcontainers.org
 [15]: http://opensource.org/licenses/MIT
 [16]: https://github.com/Microsoft/mssql-jdbc
 [17]: http://www.opensource.org/licenses/mit-license.php
