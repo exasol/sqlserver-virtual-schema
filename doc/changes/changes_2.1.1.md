@@ -22,7 +22,6 @@ This release fixes vulnerability CVE-2023-42503 in transitive dependency to `org
 * Updated `com.exasol:hamcrest-resultset-matcher:1.5.2` to `1.6.1`
 * Updated `com.exasol:test-db-builder-java:3.4.2` to `3.5.1`
 * Updated `com.exasol:virtual-schema-common-jdbc:10.4.0` to `11.0.2`
-* Updated `com.microsoft.sqlserver:mssql-jdbc:11.2.1.jre8` to `12.4.1.jre11`
 * Updated `org.junit.jupiter:junit-jupiter:5.9.2` to `5.10.0`
 * Updated `org.mockito:mockito-junit-jupiter:5.2.0` to `5.6.0`
 * Updated `org.testcontainers:junit-jupiter:1.17.6` to `1.19.1`
