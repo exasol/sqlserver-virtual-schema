@@ -4,7 +4,7 @@ Code name: Dependency Upgrade on Top of 2.1.0
 
 ## Summary
 
-This release fixes vulnerability CVE-2023-42503 in transitive dependency to `org.apache.commons:commons-compress` via `exasol-testcontainers` by updating dependencies.
+This release fixes vulnerability CVE-2023-42503 in transitive test dependency to `org.apache.commons:commons-compress` via `exasol-testcontainers` by updating dependencies.
 
 ## Security
 
