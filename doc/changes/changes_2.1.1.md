@@ -1,4 +1,4 @@
-# Virtual Schema for SQLServer 2.1.1, released 2023-??-??
+# Virtual Schema for SQLServer 2.1.1, released 2023-10-24
 
 Code name: Dependency Upgrade on Top of 2.1.0
 
