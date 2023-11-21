@@ -20,6 +20,7 @@ This release fixes vulnerability CVE-2023-4043 in test dependency `org.eclipse.p
 * Updated `com.microsoft.sqlserver:mssql-jdbc:11.2.1.jre8` to `12.4.2.jre8`
 * Updated `org.junit.jupiter:junit-jupiter:5.10.0` to `5.10.1`
 * Updated `org.mockito:mockito-junit-jupiter:5.6.0` to `5.7.0`
+* Added `org.slf4j:slf4j-jdk14:2.0.9`
 * Updated `org.testcontainers:junit-jupiter:1.19.1` to `1.19.2`
 * Updated `org.testcontainers:mssqlserver:1.19.1` to `1.19.2`
 
