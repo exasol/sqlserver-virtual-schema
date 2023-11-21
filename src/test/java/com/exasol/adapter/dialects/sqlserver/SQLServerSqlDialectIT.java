@@ -238,9 +238,8 @@ class SQLServerSqlDialectIT {
     @Test
     void testCount() throws SQLException {
         final String query = "SELECT COUNT(*) FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE;
-        final ResultSet expected = getExpectedResultSet(List.of("col1 DECIMAL(19)"), List.of("3"));
         final String expectedRewrittenQuery = "SELECT COUNT_BIG(*) FROM";
-        assertAll(() -> assertThat(getActualResultSet(query), matchesResultSet(expected)),
+        assertAll(() -> assertThat(getActualResultSet(query), table("BIGINT").row(3L).matches()),
                 () -> assertThat(getExplainVirtualString(query), containsString(expectedRewrittenQuery)));
     }
 
