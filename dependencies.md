@@ -45,11 +45,6 @@
 | [Reproducible Build Maven Plugin][43]                   | [Apache 2.0][29]                               |
 | [Project keeper maven plugin][44]                       | [The MIT License][45]                          |
 | [Maven Dependency Plugin][46]                           | [The Apache Software License, Version 2.0][29] |
-| [Maven Clean Plugin][47]                                | [The Apache Software License, Version 2.0][29] |
-| [Maven Resources Plugin][48]                            | [The Apache Software License, Version 2.0][29] |
-| [Maven Install Plugin][49]                              | [The Apache Software License, Version 2.0][29] |
-| [Maven Deploy Plugin][50]                               | [The Apache Software License, Version 2.0][29] |
-| [Maven Site Plugin 3][51]                               | [The Apache Software License, Version 2.0][29] |
 
 [0]: https://github.com/exasol/virtual-schema-common-jdbc/
 [1]: https://github.com/exasol/virtual-schema-common-jdbc/blob/main/LICENSE
@@ -62,7 +57,7 @@
 [8]: https://junit.org/junit5/
 [9]: https://www.eclipse.org/legal/epl-v20.html
 [10]: https://github.com/mockito/mockito
-[11]: https://github.com/mockito/mockito/blob/main/LICENSE
+[11]: https://opensource.org/licenses/MIT
 [12]: https://github.com/exasol/exasol-testcontainers/
 [13]: https://github.com/exasol/exasol-testcontainers/blob/main/LICENSE
 [14]: https://java.testcontainers.org
@@ -98,8 +93,3 @@
 [44]: https://github.com/exasol/project-keeper/
 [45]: https://github.com/exasol/project-keeper/blob/main/LICENSE
 [46]: http://maven.apache.org/plugins/maven-dependency-plugin/
-[47]: http://maven.apache.org/plugins/maven-clean-plugin/
-[48]: http://maven.apache.org/plugins/maven-resources-plugin/
-[49]: http://maven.apache.org/plugins/maven-install-plugin/
-[50]: http://maven.apache.org/plugins/maven-deploy-plugin/
-[51]: http://maven.apache.org/plugins/maven-site-plugin/
