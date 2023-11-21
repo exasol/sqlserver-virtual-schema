@@ -4,11 +4,15 @@ Code name: Fix CVE-2023-4043 in test dependency `org.eclipse.parsson:parsson`
 
 ## Summary
 
-This release fixes vulnerability CVE-2023-4043 in test dependency `org.eclipse.parsson:parsson`.
+This release fixes vulnerability CVE-2023-4043 in test dependency `org.eclipse.parsson:parsson`. It also runs integration tests with Exasol DB version 8.
 
 ## Security
 
 * #114: Fixed CVE-2023-4043 in test dependency `org.eclipse.parsson:parsson`
+
+## Feature
+
+* #21: Updated tests to Exasol DB version 8
 
 ## Dependency Updates
 
