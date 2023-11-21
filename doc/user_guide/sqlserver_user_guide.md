@@ -46,7 +46,7 @@ The SQL statement below creates the adapter script, defines the Java class that 
 ```sql
 CREATE OR REPLACE JAVA ADAPTER SCRIPT SCHEMA_FOR_VS_SCRIPT.ADAPTER_SCRIPT_SQLSERVER AS
   %scriptclass com.exasol.adapter.RequestDispatcher;
-  %jar /buckets/<BFS service>/<bucket>/virtual-schema-dist-11.0.2-sqlserver-2.1.1.jar;
+  %jar /buckets/<BFS service>/<bucket>/virtual-schema-dist-11.0.2-sqlserver-2.1.2.jar;
   %jar /buckets/<BFS service>/<bucket>/mssql-jdbc-<version>.jre8.jar;
 /
 ```
@@ -126,7 +126,8 @@ In the following matrix you find combinations of JDBC driver and dialect version
 
 | Virtual Schema Version | SQL SERVER Version     | Driver Name       | Driver Version |
 |------------------------|------------------------|-------------------|----------------|
-| Latest                 | 2019-CU17-ubuntu-20.04 | MS SQL JDBC JRE 8 | 11.2.0.jre8    |
+| 2.1.1                  | 2019-CU17-ubuntu-20.04 | MS SQL JDBC JRE 8 | 11.2.0.jre8    |
+| Latest, 2.1.2          | 2022-CU10-ubuntu-22.04 | MS SQL JDBC JRE 8 | 12.4.2.jre8    |
 
 
 ## Known Issues
