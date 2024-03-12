@@ -27,7 +27,7 @@ class SQLServerColumnMetadataReaderTest extends AbstractColumnMetadataReaderTest
         final int expectedSize = 42;
         final DataType type = this.columnMetadataReader
                 .mapJdbcType(new JDBCTypeDescription(Types.VARCHAR, 0, expectedSize, expectedSize, ""));
-        assertThat(type, equalTo(DataType.createVarChar(expectedSize, ExaCharset.ASCII)));
+        assertThat(type, equalTo(DataType.createVarChar(expectedSize, ExaCharset.UTF8)));
     }
 
     @Test
