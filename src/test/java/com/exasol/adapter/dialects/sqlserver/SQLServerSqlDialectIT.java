@@ -43,7 +43,7 @@ class SQLServerSqlDialectIT {
     private static final String VIRTUAL_SCHEMA_JDBC = "VIRTUAL_SCHEMA_JDBC";
     private static final String JDBC_DRIVER_NAME = "mssql-jdbc.jar";
     private static final Path JDBC_DRIVER_PATH = Path.of("target/sqlserver-driver/" + JDBC_DRIVER_NAME);
-    public static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "virtual-schema-dist-11.0.2-sqlserver-2.1.2.jar";
+    public static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "virtual-schema-dist-12.0.0-sqlserver-2.1.3.jar";
     public static final Path PATH_TO_VIRTUAL_SCHEMAS_JAR = Path.of("target", VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION);
     public static final String SCHEMA_EXASOL = "SCHEMA_EXASOL";
     public static final String ADAPTER_SCRIPT_EXASOL = "ADAPTER_SCRIPT_EXASOL";
