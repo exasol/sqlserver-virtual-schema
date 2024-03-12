@@ -164,6 +164,16 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <!-- COS loader in Exasol 7.1 requires a JRE 8 compatible JDBC driver. -->
+                        <exclude>com.microsoft.sqlserver:mssql-jdbc:jar:*:*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <parent>

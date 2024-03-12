@@ -23,7 +23,6 @@ This is a security release in which we updated test dependency `com.exasol:exaso
 * Updated `com.exasol:hamcrest-resultset-matcher:1.6.3` to `1.6.5`
 * Updated `com.exasol:test-db-builder-java:3.5.2` to `3.5.4`
 * Updated `com.exasol:virtual-schema-common-jdbc:11.0.2` to `12.0.0`
-* Updated `com.microsoft.sqlserver:mssql-jdbc:12.4.2.jre8` to `12.6.1.jre11`
 * Updated `org.junit.jupiter:junit-jupiter:5.10.1` to `5.10.2`
 * Updated `org.mockito:mockito-junit-jupiter:5.7.0` to `5.11.0`
 * Updated `org.slf4j:slf4j-jdk14:2.0.9` to `2.0.12`
