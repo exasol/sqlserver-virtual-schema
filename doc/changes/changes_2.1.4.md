@@ -1,12 +1,15 @@
 # Virtual Schema for SQLServer 2.1.4, released 2025-??-??
 
-Code name:
+Code name: boolean push down fixes
 
 ## Summary
 
-## Features
+This release fixes an issue where using boolean expression in the SELECT clause, e.g, `SELECT false FROM ...` would
+generate an invalid query.
 
-* ISSUE_NUMBER: description
+## Bugfixes
+
+* #33: "FALSE" constant is incorrectly pushed down as "1=0"
 
 ## Dependency Updates
 
