@@ -4,7 +4,7 @@ Code name: boolean push down fixes
 
 ## Summary
 
-This release fixes an issue where using boolean expression in the SELECT clause, e.g, `SELECT false FROM ...` would
+This release fixes an issue where using boolean expressions in the SELECT clause, e.g, `SELECT false FROM ...` would
 generate an invalid query.
 
 ## Bugfixes
