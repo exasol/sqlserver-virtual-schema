@@ -181,7 +181,7 @@ class SQLServerSqlGenerationVisitorTest {
             // GROUP BY USER_ID
             // HAVING 1 < COUNT(URL)
             // ORDER BY USER_ID
-            // LIMIT 10;
+            // LIMIT 10
             final TableMetadata clicksMeta = getClicksTableMetadata();
             final SqlTable fromClause = new SqlTable("CLICKS", clicksMeta);
             final SqlSelectList selectList = SqlSelectList.createRegularSelectList(List.of(
