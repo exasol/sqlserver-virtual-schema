@@ -132,4 +132,7 @@ In the following matrix you find combinations of JDBC driver and dialect version
 
 ## Known Issues
 
-* Select with boolean expressions, such as `SELECT 1 = 1`, `SELECT 1 = 0` or `SELECT TRUE` won't work with this Virtual Schema because SQL Server doesn't support a boolean data type.
+* Select with boolean expressions, such as `SELECT c1 = 1` or `SELECT c2 IS NULL` won't work with this Virtual Schema 
+because SQL Server doesn't support a boolean data type. But the same behaviour can be achieved using a `CASE WHEN`
+expression, i.e. `SELECT CASE WHEN c1 = 1 THEN true ELSE false END` or `SELECT CASE WHEN c2 IS NULL THEN true ELSE false END`
+as in this case the Virtual Schema will handle the result as an SQLServer BIT type that will be converted to an Exasol BOOLEAN.

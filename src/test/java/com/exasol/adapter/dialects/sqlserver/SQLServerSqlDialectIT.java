@@ -236,16 +236,28 @@ class SQLServerSqlDialectIT {
     @Test
     void testSelectWithBooleanExpressionTrue() {
         String query = "SELECT \"varchar_col\", true FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
-                " WHERE \"varchar_col\" = 'first' and 1 = 1";
+                " WHERE \"varchar_col\" = 'first' AND 1 = 1";
         assertVsQuery(query, table().row("first", true).matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
     }
 
     @Test
     void testSelectWithBooleanExpressionFalse() {
         String query = "SELECT \"varchar_col\", false FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
-                " WHERE \"varchar_col\" = 'first' or 1 = 0";
+                " WHERE \"varchar_col\" = 'first' OR 1 = 0";
         assertVsQuery(query, table().row("first", false).matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
     }
+
+    @Test
+    void testSelectWithBooleanCaseWhen() {
+        String query = "SELECT \"varchar_col\", CASE WHEN \"varchar_col\" = 'second' THEN true ELSE false END" +
+                " FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE;
+        assertVsQuery(query, table()
+                .row("first", false)
+                .row("second", true)
+                .row("third", false)
+                .matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
+    }
+
 
     private void assertVsQuery(final String sql, final Matcher<ResultSet> expected) {
         try {
