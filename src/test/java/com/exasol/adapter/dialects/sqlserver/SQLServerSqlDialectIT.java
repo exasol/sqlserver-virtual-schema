@@ -33,7 +33,7 @@ import com.exasol.matcher.TypeMatchMode;
 @Tag("integration")
 @Testcontainers
 class SQLServerSqlDialectIT {
-    private static final String MS_SQL_SERVER_CONTAINER_NAME = "mcr.microsoft.com/mssql/server:2022-CU10-ubuntu-22.04";
+    private static final String MS_SQL_SERVER_CONTAINER_NAME = "mcr.microsoft.com/mssql/server:2022-CU17-ubuntu-22.04";
     private static final String SCHEMA_SQL_SERVER = "SCHEMA_SQL_SERVER";
     private static final String TABLE_SQL_SERVER_NUMERIC_AND_DATE_DATA_TYPES = "TABLE_SQL_SERVER_NUMERIC_AND_DATE";
     private static final String TABLE_SQL_SERVER_STRING_DATA_TYPES = "TABLE_SQL_SERVER_STRING";

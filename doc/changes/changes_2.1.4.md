@@ -10,6 +10,16 @@ Code name:
 
 ## Dependency Updates
 
+### Test Dependency Updates
+
+* Updated `com.exasol:exasol-testcontainers:7.0.1` to `7.1.3`
+* Updated `com.exasol:hamcrest-resultset-matcher:1.6.5` to `1.7.0`
+* Updated `com.exasol:test-db-builder-java:3.5.4` to `3.6.0`
+* Updated `com.microsoft.sqlserver:mssql-jdbc:12.4.2.jre8` to `12.8.1.jre8`
+* Updated `org.slf4j:slf4j-jdk14:2.0.12` to `2.0.17`
+* Updated `org.testcontainers:junit-jupiter:1.19.7` to `1.20.6`
+* Updated `org.testcontainers:mssqlserver:1.19.7` to `1.20.6`
+
 ### Plugin Dependency Updates
 
 * Updated `com.exasol:error-code-crawler-maven-plugin:2.0.1` to `2.0.3`
