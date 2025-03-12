@@ -154,7 +154,7 @@ class SQLServerSqlGenerationVisitorTest {
             "ST_TOUCHES : 'left'.STTouches('right')", //
             "ST_UNION : CAST('left'.STUnion('right') AS VARCHAR(8000))", //
             "ST_WITHIN : 'left'.STWithin('right')", //
-            "BIT_AND : 'left' & '" + "" + "right'", //
+            "BIT_AND : 'left' & '" + "right'", //
             "BIT_OR : 'left' | 'right'", //
             "BIT_XOR : 'left' ^ 'right'", //
             "BIT_NOT : ~ 'left'", //
@@ -181,7 +181,7 @@ class SQLServerSqlGenerationVisitorTest {
             // GROUP BY USER_ID
             // HAVING 1 < COUNT(URL)
             // ORDER BY USER_ID
-            // LIMIT 10;
+            // LIMIT 10
             final TableMetadata clicksMeta = getClicksTableMetadata();
             final SqlTable fromClause = new SqlTable("CLICKS", clicksMeta);
             final SqlSelectList selectList = SqlSelectList.createRegularSelectList(List.of(
@@ -233,17 +233,31 @@ class SQLServerSqlGenerationVisitorTest {
     }
 
     @Test
-    void testVisitLiteralBoolTrue() {
-        assertThat(this.visitor.visit(new SqlLiteralBool(true)), equalTo("1 = 1"));
+    void testVisitLiteralBoolTrueInPredicate() throws AdapterException {
+        final SqlPredicateOr node = new SqlPredicateOr(List.of(new SqlLiteralBool(true)));
+        assertThat(this.visitor.visit(node), equalTo("(1 = 1)"));
     }
 
     @Test
-    void testVisitLiteralBoolFalse() {
-        assertThat(this.visitor.visit(new SqlLiteralBool(false)), equalTo("1 = 0"));
+    void testVisitLiteralBoolFalseInPredicate() throws AdapterException {
+        final SqlPredicateOr node = new SqlPredicateOr(List.of(new SqlLiteralBool(false)));
+        assertThat(this.visitor.visit(node), equalTo("(1 = 0)"));
     }
 
     @Test
-    void testVisitColumn() throws AdapterException {
+    void testVisitLiteralBoolTrueInSelectList() throws AdapterException {
+        final SqlSelectList selectList = SqlSelectList.createRegularSelectList(List.of(new SqlLiteralBool(true)));
+        assertThat(this.visitor.visit(selectList), equalTo("1"));
+    }
+
+    @Test
+    void testVisitLiteralBoolFalseInSelectList() throws AdapterException {
+        final SqlSelectList selectList = SqlSelectList.createRegularSelectList(List.of(new SqlLiteralBool(false)));
+        assertThat(this.visitor.visit(selectList), equalTo("0"));
+    }
+
+    @Test
+    void testVisitColumn() {
         final SqlColumn column = new SqlColumn(0,
                 ColumnMetadata.builder().name("col1").type(DataType.createBool()).adapterNotes("invalidJson").build());
         column.setParent(SqlSelectList.createRegularSelectList(List.of(column)));

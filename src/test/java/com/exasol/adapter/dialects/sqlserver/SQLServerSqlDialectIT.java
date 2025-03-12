@@ -16,6 +16,10 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
+import com.exasol.exasoltestsetup.ExasolTestSetup;
+import com.exasol.exasoltestsetup.ExasolTestSetupFactory;
+import com.exasol.udfdebugging.UdfTestSetup;
+import com.github.dockerjava.api.model.NetworkSettings;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,7 +37,7 @@ import com.exasol.matcher.TypeMatchMode;
 @Tag("integration")
 @Testcontainers
 class SQLServerSqlDialectIT {
-    private static final String MS_SQL_SERVER_CONTAINER_NAME = "mcr.microsoft.com/mssql/server:2022-CU10-ubuntu-22.04";
+    private static final String MS_SQL_SERVER_CONTAINER_NAME = "mcr.microsoft.com/mssql/server:2022-CU17-ubuntu-22.04";
     private static final String SCHEMA_SQL_SERVER = "SCHEMA_SQL_SERVER";
     private static final String TABLE_SQL_SERVER_NUMERIC_AND_DATE_DATA_TYPES = "TABLE_SQL_SERVER_NUMERIC_AND_DATE";
     private static final String TABLE_SQL_SERVER_STRING_DATA_TYPES = "TABLE_SQL_SERVER_STRING";
@@ -43,11 +47,10 @@ class SQLServerSqlDialectIT {
     private static final String VIRTUAL_SCHEMA_JDBC = "VIRTUAL_SCHEMA_JDBC";
     private static final String JDBC_DRIVER_NAME = "mssql-jdbc.jar";
     private static final Path JDBC_DRIVER_PATH = Path.of("target/sqlserver-driver/" + JDBC_DRIVER_NAME);
-    public static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "virtual-schema-dist-12.0.0-sqlserver-2.1.3.jar";
+    public static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "virtual-schema-dist-12.0.0-sqlserver-2.1.4.jar";
     public static final Path PATH_TO_VIRTUAL_SCHEMAS_JAR = Path.of("target", VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION);
     public static final String SCHEMA_EXASOL = "SCHEMA_EXASOL";
     public static final String ADAPTER_SCRIPT_EXASOL = "ADAPTER_SCRIPT_EXASOL";
-    public static final String DOCKER_IP_ADDRESS = "172.17.0.1";
     public static final String JDBC_DRIVER_CONFIGURATION_FILE_NAME = "settings.cfg";
 
     private static Connection exasolConnection;
@@ -68,16 +71,29 @@ class SQLServerSqlDialectIT {
         createSqlServerTableNumericAndDateDataTypes();
         createSqlServerTableStringDataTypes();
         exasolConnection = EXASOL_CONTAINER.createConnection("");
-        final ExasolObjectFactory exasolFactory = new ExasolObjectFactory(exasolConnection);
+        final ExasolObjectFactory exasolFactory = buildExasolObjectFactory(exasolConnection);
         final ExasolSchema exasolSchema = exasolFactory.createSchema(SCHEMA_EXASOL);
         final AdapterScript adapterScript = createAdapterScript(exasolSchema);
-        final String connectionString = "jdbc:sqlserver://" + DOCKER_IP_ADDRESS + ":"
-                + MS_SQL_SERVER_CONTAINER.getMappedPort(MS_SQL_SERVER_PORT) + ";trustServerCertificate=true";
+
+        final String connectionString = buildMSSqlServerConnectionString();
         final ConnectionDefinition connectionDefinition = exasolFactory.createConnectionDefinition(JDBC_CONNECTION_NAME,
                 connectionString, MS_SQL_SERVER_CONTAINER.getUsername(), MS_SQL_SERVER_CONTAINER.getPassword());
         exasolFactory.createVirtualSchemaBuilder(VIRTUAL_SCHEMA_JDBC).adapterScript(adapterScript)
                 .connectionDefinition(connectionDefinition)
                 .properties(Map.of("CATALOG_NAME", "master", "SCHEMA_NAME", SCHEMA_SQL_SERVER)).build();
+    }
+
+    private static ExasolObjectFactory buildExasolObjectFactory(final Connection exasolConnection) {
+        final ExasolTestSetup testSetup = new ExasolTestSetupFactory().getTestSetup();
+        final UdfTestSetup udfTestSetup = new UdfTestSetup(testSetup, exasolConnection);
+        return new ExasolObjectFactory(exasolConnection,
+                ExasolObjectConfiguration.builder().withJvmOptions(udfTestSetup.getJvmOptions()).build());
+    }
+
+    private static String buildMSSqlServerConnectionString() {
+        final NetworkSettings networkSettings = MS_SQL_SERVER_CONTAINER.getContainerInfo().getNetworkSettings();
+        final String ipAddress = networkSettings.getNetworks().values().iterator().next().getIpAddress();
+        return "jdbc:sqlserver://" + ipAddress + ":" + MS_SQL_SERVER_PORT + ";trustServerCertificate=true";
     }
 
     @AfterAll
@@ -208,8 +224,8 @@ class SQLServerSqlDialectIT {
     }
 
     @Test
-    void testSelectStarWithArtificialWhereClauseTrue() {
-        assertVsQuery("SELECT * FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE + " WHERE 1 = 1", //
+    void testSelectStar() {
+        assertVsQuery("SELECT * FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE, //
                 table() //
                         .row(-9223372036854775808L, "00:00:00.0000000", "first") //
                         .row(0, "01:02:03.0000000", "second") //
@@ -218,10 +234,30 @@ class SQLServerSqlDialectIT {
     }
 
     @Test
-    void testSelectStarWithArtificialWhereClauseFalse() {
-        assertVsQuery("SELECT * FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE + " WHERE 1 = 0", //
-                table("DECIMAL", "VARCHAR", "VARCHAR").matches());
+    void testSelectWithBooleanExpressionTrue() {
+        String query = "SELECT \"varchar_col\", true FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
+                " WHERE \"varchar_col\" = 'first' AND 1 = 1";
+        assertVsQuery(query, table().row("first", true).matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
     }
+
+    @Test
+    void testSelectWithBooleanExpressionFalse() {
+        String query = "SELECT \"varchar_col\", false FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
+                " WHERE \"varchar_col\" = 'first' OR 1 = 0";
+        assertVsQuery(query, table().row("first", false).matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
+    }
+
+    @Test
+    void testSelectWithBooleanCaseWhen() {
+        String query = "SELECT \"varchar_col\", CASE WHEN \"varchar_col\" = 'second' THEN true ELSE false END" +
+                " FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE;
+        assertVsQuery(query, table()
+                .row("first", false)
+                .row("second", true)
+                .row("third", false)
+                .matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
+    }
+
 
     private void assertVsQuery(final String sql, final Matcher<ResultSet> expected) {
         try {
@@ -236,7 +272,7 @@ class SQLServerSqlDialectIT {
     }
 
     @Test
-    void testCount() throws SQLException {
+    void testCount() {
         final String query = "SELECT COUNT(*) FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE;
         final String expectedRewrittenQuery = "SELECT COUNT_BIG(*) FROM";
         assertAll(() -> assertThat(getActualResultSet(query), table("BIGINT").row(3L).matches()),
@@ -248,9 +284,18 @@ class SQLServerSqlDialectIT {
         final String query = "SELECT CURRENT_DATE FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE
                 + " LIMIT 1";
         final ResultSet expected = getExpectedResultSet(List.of("col1 DATE"),
-                List.of("'" + LocalDate.now().toString() + "'"));
+                List.of("'" + LocalDate.now() + "'"));
         final String expectedRewrittenQuery = "SELECT TOP 1 CAST(GETDATE() AS DATE) FROM";
         assertAll(() -> assertThat(getActualResultSet(query), matchesResultSet(expected)),
+                () -> assertThat(getExplainVirtualString(query), containsString(expectedRewrittenQuery)));
+    }
+
+    @Test
+    void testGetBoolean() {
+        final String query = "SELECT TRUE, FALSE FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE
+                + " LIMIT 1";
+        final String expectedRewrittenQuery = "SELECT TOP 1 1, 0 FROM";
+        assertAll(() -> assertThat(getActualResultSet(query), table("BOOLEAN", "BOOLEAN").row(true, false).matches()),
                 () -> assertThat(getExplainVirtualString(query), containsString(expectedRewrittenQuery)));
     }
 

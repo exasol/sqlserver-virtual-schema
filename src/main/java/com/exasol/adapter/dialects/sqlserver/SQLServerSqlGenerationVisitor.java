@@ -2,6 +2,7 @@ package com.exasol.adapter.dialects.sqlserver;
 
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import com.exasol.adapter.AdapterException;
@@ -17,6 +18,9 @@ import com.exasol.errorreporting.ExaError;
 public class SQLServerSqlGenerationVisitor extends SqlGenerationVisitor {
     private static final int SQL_SERVER_DATETIME_OFFSET = -155;
     private static final int MAX_SQLSERVER_VARCHAR_SIZE = 8000;
+
+    private static final EnumSet<SqlNodeType> BOOLEAN_EXPRESSION_NODE = EnumSet.of(
+            SqlNodeType.PREDICATE_AND, SqlNodeType.PREDICATE_OR, SqlNodeType.PREDICATE_NOT);
 
     /**
      * Create a new instance of the {@link SQLServerSqlGenerationVisitor}.
@@ -364,6 +368,12 @@ public class SQLServerSqlGenerationVisitor extends SqlGenerationVisitor {
 
     @Override
     public String visit(final SqlLiteralBool literal) {
-        return literal.getValue() ? "1 = 1" : "1 = 0";
+        final SqlNode parent = literal.getParent();
+        // MSSQL doesn't have boolean literals, only output a boolean expression in the node types that accept it
+        if (parent != null && BOOLEAN_EXPRESSION_NODE.contains(parent.getType())) {
+            return literal.getValue() ? "1 = 1" : "1 = 0";
+        } else {
+            return literal.getValue() ? "1" : "0";
+        }
     }
 }
