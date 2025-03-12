@@ -127,7 +127,8 @@ In the following matrix you find combinations of JDBC driver and dialect version
 | Virtual Schema Version | SQL SERVER Version     | Driver Name       | Driver Version |
 |------------------------|------------------------|-------------------|----------------|
 | 2.1.1                  | 2019-CU17-ubuntu-20.04 | MS SQL JDBC JRE 8 | 11.2.0.jre8    |
-| Latest, 2.1.2          | 2022-CU10-ubuntu-22.04 | MS SQL JDBC JRE 8 | 12.4.2.jre8    |
+| 2.1.2                  | 2022-CU10-ubuntu-22.04 | MS SQL JDBC JRE 8 | 12.4.2.jre8    |
+| Latest, 2.1.4          | 2022-CU17-ubuntu-22.04 | MS SQL JDBC JRE 8 | 12.8.1.jre8    |
 
 
 ## Known Issues
@@ -136,3 +137,7 @@ In the following matrix you find combinations of JDBC driver and dialect version
 because SQL Server doesn't support a boolean data type. But the same behaviour can be achieved using a `CASE WHEN`
 expression, i.e. `SELECT CASE WHEN c1 = 1 THEN true ELSE false END` or `SELECT CASE WHEN c2 IS NULL THEN true ELSE false END`
 as in this case the Virtual Schema will handle the result as an SQLServer BIT type that will be converted to an Exasol BOOLEAN.
+
+* SQL Server doesn't support `NULLS FIRST / LAST` syntax and always orders `NULL` first when using ascending order, and last 
+when using descending order. As a workaround an `NVL` function can be used with the highest value depending on the column type, 
+e.g. `ORDER BY NVL(NUM, 9999999999), NVL(NAME, 'ZZZZZZ')`
