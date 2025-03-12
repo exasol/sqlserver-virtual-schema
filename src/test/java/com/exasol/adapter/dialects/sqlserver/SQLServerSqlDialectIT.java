@@ -229,6 +229,7 @@ class SQLServerSqlDialectIT {
                 table() //
                         .row(-9223372036854775808L, "00:00:00.0000000", "first") //
                         .row(0, "01:02:03.0000000", "second") //
+                        .row(1, "23:59:59.0000000", null) //
                         .row(9223372036854775807L, "23:59:59.0000000", "third") //
                         .matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
     }
@@ -254,10 +255,34 @@ class SQLServerSqlDialectIT {
         assertVsQuery(query, table()
                 .row("first", false)
                 .row("second", true)
+                .row(null, false)
                 .row("third", false)
                 .matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
     }
 
+    @Test
+    void testSelectWithAscendingOrderNullsLastNotSupported() {
+        assertVsQuery("SELECT * FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
+                        " ORDER BY \"varchar_col\" NULLS LAST",
+                table()
+                        .row(1, "23:59:59.0000000", null) // SQLServer doesn't support NULLS LAST
+                        .row(-9223372036854775808L, "00:00:00.0000000", "first")
+                        .row(0, "01:02:03.0000000", "second")
+                        .row(9223372036854775807L, "23:59:59.0000000", "third")
+                        .matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
+    }
+
+    @Test
+    void testSelectWithAscendingOrderNullWorkaround() {
+        assertVsQuery("SELECT * FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
+                        " ORDER BY nvl(\"varchar_col\", 'zzz')",
+                table()
+                        .row(-9223372036854775808L, "00:00:00.0000000", "first")
+                        .row(0, "01:02:03.0000000", "second")
+                        .row(9223372036854775807L, "23:59:59.0000000", "third")
+                        .row(1, "23:59:59.0000000", null) // null ordered last with workaround
+                        .matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
+    }
 
     private void assertVsQuery(final String sql, final Matcher<ResultSet> expected) {
         try {
@@ -275,7 +300,7 @@ class SQLServerSqlDialectIT {
     void testCount() {
         final String query = "SELECT COUNT(*) FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE;
         final String expectedRewrittenQuery = "SELECT COUNT_BIG(*) FROM";
-        assertAll(() -> assertThat(getActualResultSet(query), table("BIGINT").row(3L).matches()),
+        assertAll(() -> assertThat(getActualResultSet(query), table("BIGINT").row(4L).matches()),
                 () -> assertThat(getExplainVirtualString(query), containsString(expectedRewrittenQuery)));
     }
 
@@ -309,6 +334,7 @@ class SQLServerSqlDialectIT {
             statement.execute("INSERT INTO " + SCHEMA_SQL_SERVER + "." + TABLE_SQL_SERVER_SIMPLE + " VALUES" //
                     + "(-9223372036854775808, '00:00:00', 'first'), " //
                     + "(0, '01:02:03', 'second'), " //
+                    + "(1, '23:59:59', null), " //
                     + "(9223372036854775807, '23:59:59', 'third') " //
             );
         }
