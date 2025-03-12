@@ -135,7 +135,7 @@ public class SQLServerSqlDialect extends AbstractSqlDialect {
 
     @Override
     public NullSorting getDefaultNullSorting() {
-        return NullSorting.NULLS_SORTED_AT_START;
+        return NullSorting.NULLS_SORTED_LOW;
     }
 
     @Override

@@ -1,15 +1,18 @@
-# Virtual Schema for SQLServer 2.1.4, released 2025-??-??
+# Virtual Schema for SQLServer 2.1.4, released 2025-03-12
 
-Code name: boolean push down fixes
+Code name: Boolean and ordering fixes.
 
 ## Summary
 
 This release fixes an issue where using boolean expressions in the SELECT clause, e.g, `SELECT false FROM ...` would
 generate an invalid query.
 
+It also fixes queries using `ORDER BY` as `NULLS FIRST / LAST` is not supported by SQL Server.
+
 ## Bugfixes
 
 * #33: "FALSE" constant is incorrectly pushed down as "1=0"
+* #32: MS SQL doesn't support "NULLS LAST" part of ORDER BY clause #32
 
 ## Dependency Updates
 

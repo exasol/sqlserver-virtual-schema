@@ -189,7 +189,7 @@ class SQLServerSqlDialectTest {
 
     @Test
     void testGetDefaultNullSorting() {
-        assertThat(this.dialect.getDefaultNullSorting(), equalTo(SqlDialect.NullSorting.NULLS_SORTED_AT_START));
+        assertThat(this.dialect.getDefaultNullSorting(), equalTo(SqlDialect.NullSorting.NULLS_SORTED_LOW));
     }
 
     @Test

@@ -52,7 +52,7 @@ class SQLServerSqlGenerationVisitorTest {
                         + " FROM [test_catalog].[test_schema].[CLICKS]" //
                         + " WHERE 1 < [USER_ID]" //
                         + " GROUP BY [USER_ID] HAVING 1 < COUNT_BIG([URL])" //
-                        + " ORDER BY [USER_ID] NULLS LAST"));
+                        + " ORDER BY [USER_ID]"));
     }
 
     @CsvSource({ "ADD_DAYS, DAY", //
