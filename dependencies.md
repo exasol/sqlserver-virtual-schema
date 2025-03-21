@@ -14,7 +14,7 @@
 | Dependency                                      | License                          |
 | ----------------------------------------------- | -------------------------------- |
 | [Virtual Schema Common JDBC][0]                 | [MIT License][1]                 |
-| [Hamcrest][6]                                   | [BSD License 3][7]               |
+| [Hamcrest][6]                                   | [BSD-3-Clause][7]                |
 | [JUnit Jupiter (Aggregator)][8]                 | [Eclipse Public License v2.0][9] |
 | [mockito-junit-jupiter][10]                     | [MIT][11]                        |
 | [Test containers for Exasol on Docker][12]      | [MIT License][13]                |
@@ -62,7 +62,7 @@
 [4]: https://github.com/exasol/error-reporting-java/
 [5]: https://github.com/exasol/error-reporting-java/blob/main/LICENSE
 [6]: http://hamcrest.org/JavaHamcrest/
-[7]: http://opensource.org/licenses/BSD-3-Clause
+[7]: https://raw.githubusercontent.com/hamcrest/JavaHamcrest/master/LICENSE
 [8]: https://junit.org/junit5/
 [9]: https://www.eclipse.org/legal/epl-v20.html
 [10]: https://github.com/mockito/mockito
