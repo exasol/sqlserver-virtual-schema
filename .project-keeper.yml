@@ -5,7 +5,17 @@ sources:
       - jar_artifact
       - integration_tests
 build:
-  runnerOs: ubuntu-20.04
+  runnerOs: ubuntu-latest
   exasolDbVersions:
-    - "7.1.30"
-    - "8.32.0"
+    - "8.34.0"
+    # - "7.1.30" # Exasol 7.1.x does not yet support the latest Ubuntu version
+  workflows:
+    - name: ci-build.yml
+      stepCustomizations:
+        - action: INSERT_AFTER
+          job: matrix-build
+          stepId: enable-testcontainer-reuse
+          content:
+            name: Fix VM Crash in UDFs
+            id: fix-vm-crash
+            run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
