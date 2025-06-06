@@ -1,4 +1,4 @@
-# Virtual Schema for SQLServer 2.1.5, released 2025-06-04
+# Virtual Schema for SQLServer 2.1.5, released 2025-06-06
 
 Code name: Exception for vulnerability CVE-2024-55551 in test dependencies
 
