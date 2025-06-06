@@ -12,6 +12,10 @@ We added an exception for the OSSIndex for CVE-2024-55551, which is a false posi
 
 ## Dependency Updates
 
+### Test Dependency Updates
+
+* Updated `com.exasol:exasol-testcontainers:7.1.3` to `7.1.6`
+
 ### Plugin Dependency Updates
 
 * Updated `com.exasol:artifact-reference-checker-maven-plugin:0.4.2` to `0.4.3`
