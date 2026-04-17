@@ -10,6 +10,10 @@ Code name:
 
 ## Dependency Updates
 
+### Test Dependency Updates
+
+* Updated `com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre8` to `12.8.2.jre11`
+
 ### Plugin Dependency Updates
 
 * Updated `com.exasol:artifact-reference-checker-maven-plugin:0.4.3` to `0.4.4`
