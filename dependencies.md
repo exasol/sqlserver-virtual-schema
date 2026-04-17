@@ -41,7 +41,7 @@
 | [Apache Maven Dependency Plugin][38]                    | [Apache-2.0][29]                            |
 | [Apache Maven Compiler Plugin][39]                      | [Apache-2.0][29]                            |
 | [Apache Maven Enforcer Plugin][40]                      | [Apache-2.0][29]                            |
-| [Maven Flatten Plugin][41]                              | [Apache Software Licenese][29]              |
+| [Maven Flatten Plugin][41]                              | [Apache Software License][29]               |
 | [org.sonatype.ossindex.maven:ossindex-maven-plugin][42] | [ASL2][43]                                  |
 | [Maven Surefire Plugin][44]                             | [Apache-2.0][29]                            |
 | [Versions Maven Plugin][45]                             | [Apache License, Version 2.0][29]           |
@@ -89,7 +89,7 @@
 [30]: https://maven.apache.org/plugins/maven-install-plugin/
 [31]: https://maven.apache.org/plugins/maven-resources-plugin/
 [32]: https://maven.apache.org/plugins/maven-site-plugin/
-[33]: http://docs.sonarqube.org/display/PLUG/Plugin+Library/sonar-scanner-maven/sonar-maven-plugin
+[33]: https://docs.sonarsource.com/sonarqube-server/latest/extension-guide/developing-a-plugin/plugin-basics/sonar-scanner-maven/sonar-maven-plugin/
 [34]: http://www.gnu.org/licenses/lgpl.txt
 [35]: https://maven.apache.org/plugins/maven-toolchains-plugin/
 [36]: https://github.com/exasol/project-keeper/
