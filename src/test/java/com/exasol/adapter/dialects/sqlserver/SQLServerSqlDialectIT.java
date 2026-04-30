@@ -52,12 +52,14 @@ class SQLServerSqlDialectIT {
     public static final String SCHEMA_EXASOL = "SCHEMA_EXASOL";
     public static final String ADAPTER_SCRIPT_EXASOL = "ADAPTER_SCRIPT_EXASOL";
     public static final String JDBC_DRIVER_CONFIGURATION_FILE_NAME = "settings.cfg";
+    private static VirtualSchema virtualSchema;
 
     private static Connection exasolConnection;
 
     @Container
     private static final MSSQLServerContainer<?> MS_SQL_SERVER_CONTAINER = new MSSQLServerContainer<>(
             MS_SQL_SERVER_CONTAINER_NAME);
+    @SuppressWarnings("resource")
     @Container
     private static final ExasolContainer<? extends ExasolContainer<?>> EXASOL_CONTAINER = new ExasolContainer<>()
             .withReuse(true);
@@ -78,9 +80,9 @@ class SQLServerSqlDialectIT {
         final String connectionString = buildMSSqlServerConnectionString();
         final ConnectionDefinition connectionDefinition = exasolFactory.createConnectionDefinition(JDBC_CONNECTION_NAME,
                 connectionString, MS_SQL_SERVER_CONTAINER.getUsername(), MS_SQL_SERVER_CONTAINER.getPassword());
-        exasolFactory.createVirtualSchemaBuilder(VIRTUAL_SCHEMA_JDBC).adapterScript(adapterScript)
+        virtualSchema = exasolFactory.createVirtualSchemaBuilder(VIRTUAL_SCHEMA_JDBC).adapterScript(adapterScript)
                 .connectionDefinition(connectionDefinition)
-                .properties(Map.of("CATALOG_NAME", "master", "SCHEMA_NAME", SCHEMA_SQL_SERVER)).build();
+                .addProperties(Map.of("CATALOG_NAME", "master", "SCHEMA_NAME", SCHEMA_SQL_SERVER)).build();
     }
 
     private static ExasolObjectFactory buildExasolObjectFactory(final Connection exasolConnection) {
@@ -98,7 +100,13 @@ class SQLServerSqlDialectIT {
 
     @AfterAll
     static void afterAll() throws SQLException {
-        exasolConnection.close();
+        if (virtualSchema != null) {
+            virtualSchema.close();
+        }
+
+        if (exasolConnection != null) {
+            exasolConnection.close();
+        }
     }
 
     private static void createSqlServerSchema() throws SQLException {
