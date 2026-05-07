@@ -6,7 +6,7 @@ Code name: Anonymous telemetry & fixed vulnerability
 
 This release adds anonymous feature-usage telemetry via `telemetry-java`. See the [documentation](https://github.com/exasol/telemetry-java/blob/main/doc/app-user-guide.md) for details on collected data and opt-out behavior.
 
-The release also fixes CVE-2025-59250 in the SQL Server JDBC driver
+The release also fixes CVE-2025-59250 in the SQL Server JDBC driver and support for mapping `TIMESTAMP` with fractional second precision greater than milliseconds. If the Virtual Schema runs on Exasol 8.32 or newer, `TIMESTAMP` precision up to 100 accurracy can be used with MS SQL datatype `datetime2`.
 
 ## Breaking Change
 
@@ -18,7 +18,8 @@ Starting with this release, the Virtual Schema for SQLServer does not support Ex
 
 ## Features
 
-* #45: Add anonymous feature tracking
+* #45: Added anonymous feature tracking
+* #31: Added support for `TIMESTAMP(9)`
 
 ## Dependency Updates
 

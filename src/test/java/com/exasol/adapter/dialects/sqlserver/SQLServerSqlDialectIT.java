@@ -180,20 +180,21 @@ class SQLServerSqlDialectIT {
 
     @ParameterizedTest
     @CsvSource(value = { //
-            "c12 | VARCHAR(16) | 01:02:03.0000000                   | 23:59:59.0000000", //
-            "c13 | DATE        | 0001-01-01                         | 9999-12-31", //
-            "c14 | TIMESTAMP   | 1900-01-01 00:00:00                | 2078-12-31 23:59:00", //
-            "c15 | TIMESTAMP   | 1753-01-01 00:00:00.0              | 9999-12-30 23:59:59.000", //
-            "c16 | TIMESTAMP   | 0001-01-01 00:00:00.0              | 9999-12-30 23:59:59.0", //
-            "c17 | VARCHAR(34) | 0001-01-01 13:00:00.0000000 +12:15 | 9999-12-30 23:59:59.9999999 +12:15" //
-    }, delimiter = '|')
+            "c12 | VARCHAR(16) | '01:02:03.0000000' | '23:59:59.0000000'", // time(7)
+            "c13 | DATE | '0001-01-01' | '9999-12-31'", // date
+            "c14 | TIMESTAMP | '1900-01-01 00:00:00' | '2078-12-31 23:59:00'", // smalldatetime
+            "c15 | TIMESTAMP | '1753-01-01 00:00:00.0' | '9999-12-30 23:59:59.000'", // datetime
+            "c16 | TIMESTAMP(9)| TIMESTAMP '0001-01-01 00:00:00.1234568' | TIMESTAMP '9999-12-30 23:59:59.1234568'", // datetime2 supports 100ns accuracy
+            "c17 | VARCHAR(34) | '0001-01-01 13:00:00.0000000 +12:15' | '9999-12-30 23:59:59.9999999 +12:15'" // datetimeoffset
+    }, delimiter = '|', quoteCharacter = '\"')
     void testSupportedDateAndTimeDataTypes(final String columnName, final String expectedColumnType,
             final String expectedValueFirst, final String expectedValueSecond) throws SQLException {
         final String query = "SELECT \"" + columnName + "\" FROM " + VIRTUAL_SCHEMA_JDBC + "."
                 + TABLE_SQL_SERVER_NUMERIC_AND_DATE_DATA_TYPES;
         final ResultSet expected = getExpectedResultSet(List.of("col1 " + expectedColumnType), //
-                List.of("'" + expectedValueFirst + "'", "'" + expectedValueSecond + "'"));
-        assertThat(getActualResultSet(query), matchesResultSet(expected));
+                List.of(expectedValueFirst, expectedValueSecond));
+        assertThat("Value of column " + columnName + " / type " + expectedColumnType,
+                getActualResultSet(query), matchesResultSet(expected));
     }
 
     @ParameterizedTest
@@ -359,7 +360,7 @@ class SQLServerSqlDialectIT {
                             // Approximate numerics
                             + "c10 float(53), " //
                             + "c11 real, " //
-                            // Date and time
+                            // Date and time: https://learn.microsoft.com/en-us/sql/t-sql/functions/date-and-time-data-types-and-functions-transact-sql
                             + "c12 time(7), " //
                             + "c13 date, " //
                             + "c14 smalldatetime, " //
@@ -371,13 +372,13 @@ class SQLServerSqlDialectIT {
                     + " VALUES(" //
                     + "-9223372036854775808, -2147483648, -32768, 0, 0, 6, 7.43, -922337203685477.5808, -214748.3648, " //
                     + "-1.79E+308, -3978.456, " //
-                    + "'01:02:03', '0001-01-01', '1900-01-01 00:00:00', '1753-01-01 00:00:00', '0001-01-01 00:00:00', '0001-01-01 13:00:00.0000000 +12:15' " //
+                    + "'01:02:03', '0001-01-01', '1900-01-01 00:00:00', '1753-01-01 00:00:00', '0001-01-01 00:00:00.123456789', '0001-01-01 13:00:00.0000000 +12:15' " //
                     + ")");
             statement.execute("INSERT INTO " + SCHEMA_SQL_SERVER + "." + TABLE_SQL_SERVER_NUMERIC_AND_DATE_DATA_TYPES //
                     + " VALUES(" //
                     + "9223372036854775807, 2147483647, 32767, 255, 1, 999.99999999, 6.43, 922337203685477.5807, 214748.3647, " //
                     + "1.79E+308, 3978.456, " //
-                    + "'23:59:59', '9999-12-31', '2078-12-31 23:59:00', '9999-12-30 23:59:59', '9999-12-30 23:59:59', '9999-12-30 23:59:59.9999999 +12:15' " //
+                    + "'23:59:59', '9999-12-31', '2078-12-31 23:59:00', '9999-12-30 23:59:59', '9999-12-30 23:59:59.123456789', '9999-12-30 23:59:59.9999999 +12:15' " //
                     + ")");
         }
     }
