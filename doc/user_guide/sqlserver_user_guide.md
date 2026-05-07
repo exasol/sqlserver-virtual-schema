@@ -33,11 +33,6 @@ FETCHSIZE=100000
 INSERTSIZE=-1
 ```
 
-## Uploading the JDBC Driver to EXAOperation
-
-1. [Create a bucket in BucketFS](https://docs.exasol.com/administration/on-premise/bucketfs/create_new_bucket_in_bucketfs_service.htm)
-1. Upload the driver to BucketFS
-
 ## Installing the Adapter Script
 
 Upload the latest available release of [SQL Server Virtual Schema](https://github.com/exasol/sqlserver-virtual-schema/releases) to Bucket FS.
@@ -81,7 +76,6 @@ CREATE VIRTUAL SCHEMA <virtual schema name>
     CATALOG_NAME   = '<database name>'
     SCHEMA_NAME = '<schema name>';
 ```
-
 
 Please, do not forget to specify the `SCHEMA_NAME` property.
 
@@ -136,7 +130,7 @@ In the following matrix you find combinations of JDBC driver and dialect version
 | 2.1.1                  | 2019-CU17-ubuntu-20.04 | MS SQL JDBC JRE 8 | 11.2.0.jre8    |
 | 2.1.2                  | 2022-CU10-ubuntu-22.04 | MS SQL JDBC JRE 8 | 12.4.2.jre8    |
 | 2.1.4                  | 2022-CU17-ubuntu-22.04 | MS SQL JDBC JRE 8 | 12.8.1.jre8    |
-| 3.0.0                  | 2025-CU4-ubuntu-24.04  | MS SQL JDBC JRE 8 | 13.4.0.jre8    |
+| 3.0.0 (Latest)         | 2025-CU4-ubuntu-24.04  | MS SQL JDBC JRE 8 | 13.4.0.jre8    |
 
 ## Known Issues
 

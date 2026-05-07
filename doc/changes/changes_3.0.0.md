@@ -10,7 +10,7 @@ The release also fixes CVE-2025-59250 in the SQL Server JDBC driver
 
 ## Breaking Change
 
-Starting with this release, the Oracle Virtual Schema does not support Exasol versions 7.1 anymore. Only LTS version 2025.1.x and the current version are supported.
+Starting with this release, the Virtual Schema for SQLServer does not support Exasol versions 7.1 anymore. Only LTS version 2025.1.x and the current version are supported.
 
 ## Security
 
