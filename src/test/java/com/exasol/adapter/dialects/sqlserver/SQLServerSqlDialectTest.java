@@ -30,8 +30,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.exasol.ExaMetadata;
 import com.exasol.adapter.AdapterProperties;
 import com.exasol.adapter.capabilities.Capabilities;
+import com.exasol.adapter.dialects.JDBCAdapterContext;
 import com.exasol.adapter.dialects.SqlDialect;
 import com.exasol.adapter.jdbc.ConnectionFactory;
 import com.exasol.adapter.jdbc.RemoteMetadataReaderException;
@@ -44,10 +46,17 @@ class SQLServerSqlDialectTest {
     private SQLServerSqlDialect dialect;
     @Mock
     private ConnectionFactory connectionFactoryMock;
+    @Mock
+    private ExaMetadata exaMetaDataMock;
 
     @BeforeEach
     void beforeEach() {
-        this.dialect = new SQLServerSqlDialect(this.connectionFactoryMock, AdapterProperties.emptyProperties());
+        final JDBCAdapterContext context = JDBCAdapterContext.builder()
+                .connectionFactory(connectionFactoryMock)
+                .properties(AdapterProperties.emptyProperties())
+                .metadata(exaMetaDataMock)
+                .build();
+        this.dialect = new SQLServerSqlDialect(context);
     }
 
     @Test
@@ -91,6 +100,7 @@ class SQLServerSqlDialectTest {
 
     @Test
     void testMetadataReaderClass() {
+        when(exaMetaDataMock.getDatabaseVersion()).thenReturn("1.2.3");
         assertThat(this.dialect.createRemoteMetadataReader(), instanceOf(SQLServerMetadataReader.class));
     }
 
@@ -105,17 +115,21 @@ class SQLServerSqlDialectTest {
 
     @Test
     void testValidateCatalogProperty() throws PropertyValidationException {
-        final SqlDialect sqlDialect = new SQLServerSqlDialect(null, new AdapterProperties(Map.of( //
-                CONNECTION_NAME_PROPERTY, "MY_CONN", //
-                CATALOG_NAME_PROPERTY, "MY_CATALOG")));
+        final SqlDialect sqlDialect = new SQLServerSqlDialect(JDBCAdapterContext.builder()
+                .properties(new AdapterProperties(Map.of(
+                        CONNECTION_NAME_PROPERTY, "MY_CONN",
+                        CATALOG_NAME_PROPERTY, "MY_CATALOG")))
+                .build());
         sqlDialect.validateProperties();
     }
 
     @Test
     void testValidateSchemaProperty() throws PropertyValidationException {
-        final SqlDialect sqlDialect = new SQLServerSqlDialect(null, new AdapterProperties(Map.of( //
-                CONNECTION_NAME_PROPERTY, "MY_CONN", //
-                SCHEMA_NAME_PROPERTY, "MY_SCHEMA")));
+        final SqlDialect sqlDialect = new SQLServerSqlDialect(JDBCAdapterContext.builder()
+                .properties(new AdapterProperties(Map.of(
+                        CONNECTION_NAME_PROPERTY, "MY_CONN",
+                        SCHEMA_NAME_PROPERTY, "MY_SCHEMA")))
+                .build());
         sqlDialect.validateProperties();
     }
 

@@ -16,28 +16,29 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import com.exasol.exasoltestsetup.ExasolTestSetup;
-import com.exasol.exasoltestsetup.ExasolTestSetupFactory;
-import com.exasol.udfdebugging.UdfTestSetup;
-import com.github.dockerjava.api.model.NetworkSettings;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.testcontainers.containers.MSSQLServerContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.mssqlserver.MSSQLServerContainer;
 
 import com.exasol.bucketfs.Bucket;
 import com.exasol.bucketfs.BucketAccessException;
 import com.exasol.containers.ExasolContainer;
 import com.exasol.dbbuilder.dialects.exasol.*;
+import com.exasol.exasoltestsetup.ExasolTestSetup;
+import com.exasol.exasoltestsetup.ExasolTestSetupFactory;
 import com.exasol.matcher.TypeMatchMode;
+import com.exasol.udfdebugging.UdfTestSetup;
+import com.github.dockerjava.api.model.NetworkSettings;
 
 @Tag("integration")
 @Testcontainers
 class SQLServerSqlDialectIT {
-    private static final String MS_SQL_SERVER_CONTAINER_NAME = "mcr.microsoft.com/mssql/server:2022-CU17-ubuntu-22.04";
+    // Available versions: https://mcr.microsoft.com/artifact/mar/mssql/server/tags
+    private static final String MS_SQL_SERVER_CONTAINER_NAME = "mcr.microsoft.com/mssql/server:2025-CU4-ubuntu-24.04";
     private static final String SCHEMA_SQL_SERVER = "SCHEMA_SQL_SERVER";
     private static final String TABLE_SQL_SERVER_NUMERIC_AND_DATE_DATA_TYPES = "TABLE_SQL_SERVER_NUMERIC_AND_DATE";
     private static final String TABLE_SQL_SERVER_STRING_DATA_TYPES = "TABLE_SQL_SERVER_STRING";
@@ -47,7 +48,7 @@ class SQLServerSqlDialectIT {
     private static final String VIRTUAL_SCHEMA_JDBC = "VIRTUAL_SCHEMA_JDBC";
     private static final String JDBC_DRIVER_NAME = "mssql-jdbc.jar";
     private static final Path JDBC_DRIVER_PATH = Path.of("target/sqlserver-driver/" + JDBC_DRIVER_NAME);
-    public static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "virtual-schema-dist-12.0.0-sqlserver-2.1.6.jar";
+    public static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "virtual-schema-dist-14.0.2-sqlserver-3.0.0.jar";
     public static final Path PATH_TO_VIRTUAL_SCHEMAS_JAR = Path.of("target", VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION);
     public static final String SCHEMA_EXASOL = "SCHEMA_EXASOL";
     public static final String ADAPTER_SCRIPT_EXASOL = "ADAPTER_SCRIPT_EXASOL";
@@ -56,8 +57,9 @@ class SQLServerSqlDialectIT {
     private static Connection exasolConnection;
 
     @Container
-    private static final MSSQLServerContainer<?> MS_SQL_SERVER_CONTAINER = new MSSQLServerContainer<>(
+    private static final MSSQLServerContainer MS_SQL_SERVER_CONTAINER = new MSSQLServerContainer(
             MS_SQL_SERVER_CONTAINER_NAME);
+    @SuppressWarnings("resource") // will be closed by @Container annotation
     @Container
     private static final ExasolContainer<? extends ExasolContainer<?>> EXASOL_CONTAINER = new ExasolContainer<>()
             .withReuse(true);
@@ -80,7 +82,7 @@ class SQLServerSqlDialectIT {
                 connectionString, MS_SQL_SERVER_CONTAINER.getUsername(), MS_SQL_SERVER_CONTAINER.getPassword());
         exasolFactory.createVirtualSchemaBuilder(VIRTUAL_SCHEMA_JDBC).adapterScript(adapterScript)
                 .connectionDefinition(connectionDefinition)
-                .properties(Map.of("CATALOG_NAME", "master", "SCHEMA_NAME", SCHEMA_SQL_SERVER)).build();
+                .addProperties(Map.of("CATALOG_NAME", "master", "SCHEMA_NAME", SCHEMA_SQL_SERVER)).build();
     }
 
     private static ExasolObjectFactory buildExasolObjectFactory(final Connection exasolConnection) {
@@ -178,20 +180,21 @@ class SQLServerSqlDialectIT {
 
     @ParameterizedTest
     @CsvSource(value = { //
-            "c12 | VARCHAR(16) | 01:02:03.0000000                   | 23:59:59.0000000", //
-            "c13 | DATE        | 0001-01-01                         | 9999-12-31", //
-            "c14 | TIMESTAMP   | 1900-01-01 00:00:00                | 2078-12-31 23:59:00", //
-            "c15 | TIMESTAMP   | 1753-01-01 00:00:00.0              | 9999-12-30 23:59:59.000", //
-            "c16 | TIMESTAMP   | 0001-01-01 00:00:00.0              | 9999-12-30 23:59:59.0", //
-            "c17 | VARCHAR(34) | 0001-01-01 13:00:00.0000000 +12:15 | 9999-12-30 23:59:59.9999999 +12:15" //
-    }, delimiter = '|')
+            "c12 | VARCHAR(16) | '01:02:03.0000000' | '23:59:59.0000000'", // time(7)
+            "c13 | DATE | '0001-01-01' | '9999-12-31'", // date
+            "c14 | TIMESTAMP | '1900-01-01 00:00:00' | '2078-12-31 23:59:00'", // smalldatetime
+            "c15 | TIMESTAMP | '1753-01-01 00:00:00.0' | '9999-12-30 23:59:59.000'", // datetime
+            "c16 | TIMESTAMP(9)| TIMESTAMP '0001-01-01 00:00:00.1234568' | TIMESTAMP '9999-12-30 23:59:59.1234568'", // datetime2 supports 100ns accuracy
+            "c17 | VARCHAR(34) | '0001-01-01 13:00:00.0000000 +12:15' | '9999-12-30 23:59:59.9999999 +12:15'" // datetimeoffset
+    }, delimiter = '|', quoteCharacter = '\"')
     void testSupportedDateAndTimeDataTypes(final String columnName, final String expectedColumnType,
             final String expectedValueFirst, final String expectedValueSecond) throws SQLException {
         final String query = "SELECT \"" + columnName + "\" FROM " + VIRTUAL_SCHEMA_JDBC + "."
                 + TABLE_SQL_SERVER_NUMERIC_AND_DATE_DATA_TYPES;
         final ResultSet expected = getExpectedResultSet(List.of("col1 " + expectedColumnType), //
-                List.of("'" + expectedValueFirst + "'", "'" + expectedValueSecond + "'"));
-        assertThat(getActualResultSet(query), matchesResultSet(expected));
+                List.of(expectedValueFirst, expectedValueSecond));
+        assertThat("Value of column " + columnName + " / type " + expectedColumnType,
+                getActualResultSet(query), matchesResultSet(expected));
     }
 
     @ParameterizedTest
@@ -236,21 +239,21 @@ class SQLServerSqlDialectIT {
 
     @Test
     void testSelectWithBooleanExpressionTrue() {
-        String query = "SELECT \"varchar_col\", true FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
+        final String query = "SELECT \"varchar_col\", true FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
                 " WHERE \"varchar_col\" = 'first' AND 1 = 1";
         assertVsQuery(query, table().row("first", true).matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
     }
 
     @Test
     void testSelectWithBooleanExpressionFalse() {
-        String query = "SELECT \"varchar_col\", false FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
+        final String query = "SELECT \"varchar_col\", false FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
                 " WHERE \"varchar_col\" = 'first' OR 1 = 0";
         assertVsQuery(query, table().row("first", false).matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
     }
 
     @Test
     void testSelectWithBooleanCaseWhen() {
-        String query = "SELECT \"varchar_col\", CASE WHEN \"varchar_col\" = 'second' THEN true ELSE false END" +
+        final String query = "SELECT \"varchar_col\", CASE WHEN \"varchar_col\" = 'second' THEN true ELSE false END" +
                 " FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE;
         assertVsQuery(query, table()
                 .row("first", false)
@@ -263,7 +266,7 @@ class SQLServerSqlDialectIT {
     @Test
     void testSelectWithAscendingOrderNullsLastNotSupported() {
         assertVsQuery("SELECT * FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
-                        " ORDER BY \"varchar_col\" NULLS LAST",
+                " ORDER BY \"varchar_col\" NULLS LAST",
                 table()
                         .row(1, "23:59:59.0000000", null) // SQLServer doesn't support NULLS LAST
                         .row(-9223372036854775808L, "00:00:00.0000000", "first")
@@ -275,7 +278,7 @@ class SQLServerSqlDialectIT {
     @Test
     void testSelectWithAscendingOrderNullWorkaround() {
         assertVsQuery("SELECT * FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
-                        " ORDER BY nvl(\"varchar_col\", 'zzz')",
+                " ORDER BY nvl(\"varchar_col\", 'zzz')",
                 table()
                         .row(-9223372036854775808L, "00:00:00.0000000", "first")
                         .row(0, "01:02:03.0000000", "second")
@@ -357,7 +360,7 @@ class SQLServerSqlDialectIT {
                             // Approximate numerics
                             + "c10 float(53), " //
                             + "c11 real, " //
-                            // Date and time
+                            // Date and time: https://learn.microsoft.com/en-us/sql/t-sql/functions/date-and-time-data-types-and-functions-transact-sql
                             + "c12 time(7), " //
                             + "c13 date, " //
                             + "c14 smalldatetime, " //
@@ -369,13 +372,13 @@ class SQLServerSqlDialectIT {
                     + " VALUES(" //
                     + "-9223372036854775808, -2147483648, -32768, 0, 0, 6, 7.43, -922337203685477.5808, -214748.3648, " //
                     + "-1.79E+308, -3978.456, " //
-                    + "'01:02:03', '0001-01-01', '1900-01-01 00:00:00', '1753-01-01 00:00:00', '0001-01-01 00:00:00', '0001-01-01 13:00:00.0000000 +12:15' " //
+                    + "'01:02:03', '0001-01-01', '1900-01-01 00:00:00', '1753-01-01 00:00:00', '0001-01-01 00:00:00.123456789', '0001-01-01 13:00:00.0000000 +12:15' " //
                     + ")");
             statement.execute("INSERT INTO " + SCHEMA_SQL_SERVER + "." + TABLE_SQL_SERVER_NUMERIC_AND_DATE_DATA_TYPES //
                     + " VALUES(" //
                     + "9223372036854775807, 2147483647, 32767, 255, 1, 999.99999999, 6.43, 922337203685477.5807, 214748.3647, " //
                     + "1.79E+308, 3978.456, " //
-                    + "'23:59:59', '9999-12-31', '2078-12-31 23:59:00', '9999-12-30 23:59:59', '9999-12-30 23:59:59', '9999-12-30 23:59:59.9999999 +12:15' " //
+                    + "'23:59:59', '9999-12-31', '2078-12-31 23:59:00', '9999-12-30 23:59:59', '9999-12-30 23:59:59.123456789', '9999-12-30 23:59:59.9999999 +12:15' " //
                     + ")");
         }
     }

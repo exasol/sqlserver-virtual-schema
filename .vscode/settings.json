@@ -4,13 +4,20 @@
         "source.organizeImports": "explicit",
         "source.generate.finalModifiers": "explicit"
     },
-    "java.saveActions.organizeImports": true,
     "java.sources.organizeImports.starThreshold": 3,
     "java.sources.organizeImports.staticStarThreshold": 3,
     "java.test.config": {
         "vmArgs": [
-            "-Djava.util.logging.config.file=src/test/resources/logging.properties"
-        ]
+            "-Djava.util.logging.config.file=src/test/resources/logging.properties",
+            "-Dcom.exasol.dockerdb.image=2025.2.1"
+        ],
+        "env": {
+            "TESTCONTAINERS_RYUK_DISABLED": "true"
+        }
     },
     "java.configuration.updateBuildConfiguration": "automatic",
+    "sonarlint.connectedMode.project": {
+        "connectionId": "exasol",
+        "projectKey": "com.exasol:sqlserver-virtual-schema"
+    },
 }

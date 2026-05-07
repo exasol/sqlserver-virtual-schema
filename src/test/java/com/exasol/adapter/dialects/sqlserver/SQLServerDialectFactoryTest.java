@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.AdapterProperties;
+import com.exasol.adapter.dialects.JDBCAdapterContext;
 
 class SQLServerDialectFactoryTest {
     private SQLServerSqlDialectFactory factory;
@@ -23,8 +24,18 @@ class SQLServerDialectFactoryTest {
     }
 
     @Test
+    void testGetSqlDialectVersion() {
+        assertThat(this.factory.getSqlDialectVersion(), equalTo("UNKNOWN")); // Version number not available in test scope
+    }
+
+    @Test
+    void testGetAdapterProjectShortTag() {
+        assertThat(this.factory.getAdapterProjectShortTag(), equalTo("VSSQLS"));
+    }
+
+    @Test
     void testCreateDialect() {
-        assertThat(this.factory.createSqlDialect(null, AdapterProperties.emptyProperties()),
+        assertThat(this.factory.createSqlDialect(JDBCAdapterContext.builder().properties(AdapterProperties.emptyProperties()).build()),
                 instanceOf(SQLServerSqlDialect.class));
     }
 }
