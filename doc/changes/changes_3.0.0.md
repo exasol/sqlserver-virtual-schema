@@ -1,0 +1,67 @@
+# Virtual Schema for SQLServer 3.0.0, released 2026-05-07
+
+Code name: Anonymous telemetry & fixed vulnerability
+
+## Summary
+
+This release adds anonymous feature-usage telemetry via `telemetry-java`. See the [documentation](https://github.com/exasol/telemetry-java/blob/main/doc/app-user-guide.md) for details on collected data and opt-out behavior.
+
+The release also fixes CVE-2025-59250 in the SQL Server JDBC driver
+
+## Breaking Change
+
+Starting with this release, the Oracle Virtual Schema does not support Exasol versions 7.1 anymore. Only LTS version 2025.1.x and the current version are supported.
+
+## Security
+
+* #46: Fixed CVE-2025-59250 in SQL Server JDBC driver
+
+## Features
+
+* #45: Add anonymous feature tracking
+
+## Dependency Updates
+
+### Compile Dependency Updates
+
+* Updated `com.exasol:db-fundamentals-java:0.1.3` to `0.1.4`
+* Updated `com.exasol:error-reporting-java:1.0.1` to `1.0.2`
+* Updated `com.exasol:virtual-schema-common-jdbc:12.0.0` to `14.0.2`
+
+### Test Dependency Updates
+
+* Updated `com.exasol:exasol-test-setup-abstraction-java:2.1.7` to `2.1.11`
+* Updated `com.exasol:exasol-testcontainers:7.1.7` to `7.2.3`
+* Updated `com.exasol:hamcrest-resultset-matcher:1.7.0` to `1.7.2`
+* Updated `com.exasol:test-db-builder-java:3.6.0` to `4.0.0`
+* Updated `com.exasol:udf-debugging-java:0.6.15` to `0.6.18`
+* Updated `com.exasol:virtual-schema-common-jdbc:12.0.0` to `14.0.2`
+* Updated `com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre8` to `13.4.0.jre8`
+* Updated `org.hamcrest:hamcrest:2.2` to `3.0`
+* Updated `org.junit.jupiter:junit-jupiter:5.10.2` to `5.14.4`
+* Updated `org.mockito:mockito-junit-jupiter:5.11.0` to `5.23.0`
+* Removed `org.testcontainers:junit-jupiter:1.20.6`
+* Removed `org.testcontainers:mssqlserver:1.20.6`
+* Added `org.testcontainers:testcontainers-junit-jupiter:2.0.5`
+* Added `org.testcontainers:testcontainers-mssqlserver:2.0.5`
+
+### Plugin Dependency Updates
+
+* Updated `com.exasol:artifact-reference-checker-maven-plugin:0.4.3` to `0.4.4`
+* Updated `com.exasol:error-code-crawler-maven-plugin:2.0.4` to `2.0.7`
+* Updated `com.exasol:project-keeper-maven-plugin:5.2.3` to `5.6.1`
+* Updated `com.exasol:quality-summarizer-maven-plugin:0.2.0` to `0.2.1`
+* Updated `io.github.git-commit-id:git-commit-id-maven-plugin:9.0.1` to `10.0.0`
+* Updated `org.apache.maven.plugins:maven-artifact-plugin:3.6.0` to `3.6.1`
+* Updated `org.apache.maven.plugins:maven-assembly-plugin:3.7.1` to `3.8.0`
+* Updated `org.apache.maven.plugins:maven-clean-plugin:3.4.1` to `3.5.0`
+* Updated `org.apache.maven.plugins:maven-compiler-plugin:3.14.0` to `3.15.0`
+* Updated `org.apache.maven.plugins:maven-enforcer-plugin:3.5.0` to `3.6.2`
+* Updated `org.apache.maven.plugins:maven-failsafe-plugin:3.5.3` to `3.5.5`
+* Updated `org.apache.maven.plugins:maven-jar-plugin:3.4.2` to `3.5.0`
+* Updated `org.apache.maven.plugins:maven-resources-plugin:3.3.1` to `3.5.0`
+* Updated `org.apache.maven.plugins:maven-surefire-plugin:3.5.3` to `3.5.5`
+* Updated `org.codehaus.mojo:flatten-maven-plugin:1.7.0` to `1.7.3`
+* Updated `org.codehaus.mojo:versions-maven-plugin:2.18.0` to `2.21.0`
+* Updated `org.jacoco:jacoco-maven-plugin:0.8.13` to `0.8.14`
+* Updated `org.sonarsource.scanner.maven:sonar-maven-plugin:5.1.0.4751` to `5.5.0.6356`

@@ -2,29 +2,36 @@
 
 [Microsoft SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server) is a Relational Database Management System (RDBMS) developed by Microsoft. 
 
-## Registering the JDBC Driver in EXAOperation
+## Telemetry
 
-First download the [SQL Server JDBC driver](https://github.com/microsoft/mssql-jdbc/releases).
-We recommend using a `jre8` driver.
+This virtual schema uses `telemetry-java` to send anonymous feature-usage events.
 
-Now register the driver in EXAOperation:
+For details on what is collected and how to disable telemetry, see the [documentation](https://github.com/exasol/telemetry-java/blob/main/doc/app-user-guide.md).
 
-1. Click "Software"
-1. Switch to tab "JDBC Drivers"
-1. Click "Browse..."
-1. Select JDBC driver file
-1. Click "Upload"
-1. Click "Add"
-1. In a dialog "Add EXACluster JDBC driver" configure the JDBC driver (see below)
+## Uploading the JDBC Driver to Exasol BucketFS
 
-You need to specify the following settings when adding the JDBC driver via EXAOperation.
+1. Download the [SQL Server JDBC driver](https://github.com/microsoft/mssql-jdbc/releases). We recommend using a `jre8` driver.
+2. Upload the driver to BucketFS, see the [BucketFS documentation](https://docs.exasol.com/db/latest/administration/on-premise/bucketfs/accessfiles.htm) for details.
 
-| Parameter | Value                                          |
-|-----------|------------------------------------------------|
-| Name      | `SQLSERVER`                                    |
-| Main      | `com.microsoft.sqlserver.jdbc.SQLServerDriver` |
-| Prefix    | `jdbc:sqlserver:`                              |
-| Files     | `mssql-jdbc-<version>.jre8.jar`                |
+    Hint: Put the driver into folder `default/drivers/jdbc/` to register it for [ExaLoader](#registering-the-jdbc-driver-for-exaloader), too.
+
+## Registering the JDBC driver for ExaLoader
+
+In order to enable the ExaLoader to fetch data from the external database you must register the driver for ExaLoader as described in the [Installation procedure for JDBC drivers](https://github.com/exasol/docker-db/#installing-custom-jdbc-drivers).
+1. ExaLoader expects the driver in BucketFS folder `default/drivers/jdbc`.
+
+    If you uploaded the driver for UDF to a different folder, then you need to [upload](#uploading-the-jdbc-driver-to-exasol-bucketfs) the driver again.
+2. Additionally you need to create file `settings.cfg` and [upload](#uploading-the-jdbc-driver-to-exasol-bucketfs) it to the same folder in BucketFS:
+
+```properties
+DRIVERNAME=SQLSERVER
+JAR=mssql-jdbc-<version>.jre8.jar
+DRIVERMAIN=com.microsoft.sqlserver.jdbc.SQLServerDriver
+PREFIX=jdbc:sqlserver:
+NOSECURITY=YES
+FETCHSIZE=100000
+INSERTSIZE=-1
+```
 
 ## Uploading the JDBC Driver to EXAOperation
 
@@ -46,7 +53,7 @@ The SQL statement below creates the adapter script, defines the Java class that 
 ```sql
 CREATE OR REPLACE JAVA ADAPTER SCRIPT SCHEMA_FOR_VS_SCRIPT.ADAPTER_SCRIPT_SQLSERVER AS
   %scriptclass com.exasol.adapter.RequestDispatcher;
-  %jar /buckets/<BFS service>/<bucket>/virtual-schema-dist-12.0.0-sqlserver-2.1.6.jar;
+  %jar /buckets/<BFS service>/<bucket>/virtual-schema-dist-14.0.2-sqlserver-3.0.0.jar;
   %jar /buckets/<BFS service>/<bucket>/mssql-jdbc-<version>.jre8.jar;
 /
 ```

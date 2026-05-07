@@ -4,7 +4,6 @@
         "source.organizeImports": "explicit",
         "source.generate.finalModifiers": "explicit"
     },
-    "java.saveActions.organizeImports": true,
     "java.sources.organizeImports.starThreshold": 3,
     "java.sources.organizeImports.staticStarThreshold": 3,
     "java.test.config": {
@@ -13,4 +12,8 @@
         ]
     },
     "java.configuration.updateBuildConfiguration": "automatic",
+    "sonarlint.connectedMode.project": {
+        "connectionId": "exasol",
+        "projectKey": "com.exasol:sqlserver-virtual-schema"
+    },
 }

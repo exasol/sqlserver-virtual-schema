@@ -16,23 +16,23 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import com.exasol.exasoltestsetup.ExasolTestSetup;
-import com.exasol.exasoltestsetup.ExasolTestSetupFactory;
-import com.exasol.udfdebugging.UdfTestSetup;
-import com.github.dockerjava.api.model.NetworkSettings;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.testcontainers.containers.MSSQLServerContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.mssqlserver.MSSQLServerContainer;
 
 import com.exasol.bucketfs.Bucket;
 import com.exasol.bucketfs.BucketAccessException;
 import com.exasol.containers.ExasolContainer;
 import com.exasol.dbbuilder.dialects.exasol.*;
+import com.exasol.exasoltestsetup.ExasolTestSetup;
+import com.exasol.exasoltestsetup.ExasolTestSetupFactory;
 import com.exasol.matcher.TypeMatchMode;
+import com.exasol.udfdebugging.UdfTestSetup;
+import com.github.dockerjava.api.model.NetworkSettings;
 
 @Tag("integration")
 @Testcontainers
@@ -47,7 +47,7 @@ class SQLServerSqlDialectIT {
     private static final String VIRTUAL_SCHEMA_JDBC = "VIRTUAL_SCHEMA_JDBC";
     private static final String JDBC_DRIVER_NAME = "mssql-jdbc.jar";
     private static final Path JDBC_DRIVER_PATH = Path.of("target/sqlserver-driver/" + JDBC_DRIVER_NAME);
-    public static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "virtual-schema-dist-12.0.0-sqlserver-2.1.6.jar";
+    public static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "virtual-schema-dist-14.0.2-sqlserver-3.0.0.jar";
     public static final Path PATH_TO_VIRTUAL_SCHEMAS_JAR = Path.of("target", VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION);
     public static final String SCHEMA_EXASOL = "SCHEMA_EXASOL";
     public static final String ADAPTER_SCRIPT_EXASOL = "ADAPTER_SCRIPT_EXASOL";
@@ -56,8 +56,9 @@ class SQLServerSqlDialectIT {
     private static Connection exasolConnection;
 
     @Container
-    private static final MSSQLServerContainer<?> MS_SQL_SERVER_CONTAINER = new MSSQLServerContainer<>(
+    private static final MSSQLServerContainer MS_SQL_SERVER_CONTAINER = new MSSQLServerContainer(
             MS_SQL_SERVER_CONTAINER_NAME);
+    @SuppressWarnings("resource") // will be closed by @Container annotation
     @Container
     private static final ExasolContainer<? extends ExasolContainer<?>> EXASOL_CONTAINER = new ExasolContainer<>()
             .withReuse(true);
@@ -80,7 +81,7 @@ class SQLServerSqlDialectIT {
                 connectionString, MS_SQL_SERVER_CONTAINER.getUsername(), MS_SQL_SERVER_CONTAINER.getPassword());
         exasolFactory.createVirtualSchemaBuilder(VIRTUAL_SCHEMA_JDBC).adapterScript(adapterScript)
                 .connectionDefinition(connectionDefinition)
-                .properties(Map.of("CATALOG_NAME", "master", "SCHEMA_NAME", SCHEMA_SQL_SERVER)).build();
+                .addProperties(Map.of("CATALOG_NAME", "master", "SCHEMA_NAME", SCHEMA_SQL_SERVER)).build();
     }
 
     private static ExasolObjectFactory buildExasolObjectFactory(final Connection exasolConnection) {
@@ -236,21 +237,21 @@ class SQLServerSqlDialectIT {
 
     @Test
     void testSelectWithBooleanExpressionTrue() {
-        String query = "SELECT \"varchar_col\", true FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
+        final String query = "SELECT \"varchar_col\", true FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
                 " WHERE \"varchar_col\" = 'first' AND 1 = 1";
         assertVsQuery(query, table().row("first", true).matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
     }
 
     @Test
     void testSelectWithBooleanExpressionFalse() {
-        String query = "SELECT \"varchar_col\", false FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
+        final String query = "SELECT \"varchar_col\", false FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
                 " WHERE \"varchar_col\" = 'first' OR 1 = 0";
         assertVsQuery(query, table().row("first", false).matches(TypeMatchMode.NO_JAVA_TYPE_CHECK));
     }
 
     @Test
     void testSelectWithBooleanCaseWhen() {
-        String query = "SELECT \"varchar_col\", CASE WHEN \"varchar_col\" = 'second' THEN true ELSE false END" +
+        final String query = "SELECT \"varchar_col\", CASE WHEN \"varchar_col\" = 'second' THEN true ELSE false END" +
                 " FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE;
         assertVsQuery(query, table()
                 .row("first", false)
@@ -263,7 +264,7 @@ class SQLServerSqlDialectIT {
     @Test
     void testSelectWithAscendingOrderNullsLastNotSupported() {
         assertVsQuery("SELECT * FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
-                        " ORDER BY \"varchar_col\" NULLS LAST",
+                " ORDER BY \"varchar_col\" NULLS LAST",
                 table()
                         .row(1, "23:59:59.0000000", null) // SQLServer doesn't support NULLS LAST
                         .row(-9223372036854775808L, "00:00:00.0000000", "first")
@@ -275,7 +276,7 @@ class SQLServerSqlDialectIT {
     @Test
     void testSelectWithAscendingOrderNullWorkaround() {
         assertVsQuery("SELECT * FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE +
-                        " ORDER BY nvl(\"varchar_col\", 'zzz')",
+                " ORDER BY nvl(\"varchar_col\", 'zzz')",
                 table()
                         .row(-9223372036854775808L, "00:00:00.0000000", "first")
                         .row(0, "01:02:03.0000000", "second")
