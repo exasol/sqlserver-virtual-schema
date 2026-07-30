@@ -146,9 +146,11 @@ class SQLServerSqlDialectIT {
         }
     }
 
-    private ResultSet getExpectedSqlServerResultSet(final String query) throws SQLException {
-        try (final Statement statement = MS_SQL_SERVER_CONTAINER.createConnection("").createStatement()) {
-            return statement.executeQuery(query);
+    private String getExpectedSqlServerDate(final String query) throws SQLException {
+        try (final Statement statement = MS_SQL_SERVER_CONTAINER.createConnection("").createStatement();
+                final ResultSet resultSet = statement.executeQuery(query)) {
+            assertTrue(resultSet.next(), "Expected SQL Server query to return one row");
+            return resultSet.getString(1);
         }
     }
 
@@ -316,7 +318,8 @@ class SQLServerSqlDialectIT {
     void testGetDate() throws SQLException {
         final String query = "SELECT CURRENT_DATE FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE
                 + " LIMIT 1";
-        final ResultSet expected = getExpectedSqlServerResultSet("SELECT CAST(GETDATE() AS DATE)");
+        final ResultSet expected = getExpectedResultSet(List.of("col1 DATE"),
+                List.of("'" + getExpectedSqlServerDate("SELECT CAST(GETDATE() AS DATE)") + "'"));
         final String expectedRewrittenQuery = "SELECT TOP 1 CAST(GETDATE() AS DATE) FROM";
         assertAll(() -> assertThat(getActualResultSet(query), matchesResultSet(expected)),
                 () -> assertThat(getExplainVirtualString(query), containsString(expectedRewrittenQuery)));
