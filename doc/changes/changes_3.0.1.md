@@ -1,4 +1,4 @@
-# Virtual Schema for SQLServer 3.0.1, released 2026-07-30
+# Virtual Schema for SQLServer 3.0.1, released 2026-07-31
 
 Code name: Fixed vulnerability CVE-2026-9563 in org.eclipse.parsson:parsson:jar:1.1.7:test
 
