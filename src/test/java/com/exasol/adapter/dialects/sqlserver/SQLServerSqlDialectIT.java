@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
@@ -143,6 +142,12 @@ class SQLServerSqlDialectIT {
 
     private ResultSet getActualResultSet(final String query) throws SQLException {
         try (final Statement statement = exasolConnection.createStatement()) {
+            return statement.executeQuery(query);
+        }
+    }
+
+    private ResultSet getExpectedSqlServerResultSet(final String query) throws SQLException {
+        try (final Statement statement = MS_SQL_SERVER_CONTAINER.createConnection("").createStatement()) {
             return statement.executeQuery(query);
         }
     }
@@ -311,8 +316,7 @@ class SQLServerSqlDialectIT {
     void testGetDate() throws SQLException {
         final String query = "SELECT CURRENT_DATE FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE
                 + " LIMIT 1";
-        final ResultSet expected = getExpectedResultSet(List.of("col1 DATE"),
-                List.of("'" + LocalDate.now() + "'"));
+        final ResultSet expected = getExpectedSqlServerResultSet("SELECT CAST(GETDATE() AS DATE)");
         final String expectedRewrittenQuery = "SELECT TOP 1 CAST(GETDATE() AS DATE) FROM";
         assertAll(() -> assertThat(getActualResultSet(query), matchesResultSet(expected)),
                 () -> assertThat(getExplainVirtualString(query), containsString(expectedRewrittenQuery)));
