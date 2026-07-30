@@ -2,6 +2,7 @@ package com.exasol.adapter.dialects.sqlserver;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -23,8 +24,6 @@ import com.exasol.adapter.dialects.rewriting.SqlGenerationContext;
 import com.exasol.adapter.dialects.rewriting.SqlGenerationVisitorException;
 import com.exasol.adapter.metadata.*;
 import com.exasol.adapter.sql.*;
-
-import jakarta.json.stream.JsonParsingException;
 
 class SQLServerSqlGenerationVisitorTest {
     private SQLServerSqlGenerationVisitor visitor;
@@ -265,6 +264,8 @@ class SQLServerSqlGenerationVisitorTest {
         final SqlGenerationVisitorException exception = assertThrows(SqlGenerationVisitorException.class,
                 () -> this.visitor.visit(column));
         assertThat(exception.getMessage(), equalTo("E-VSSQLS-1: Unable to get a JDBC data type for an sql column 0."));
-        assertThat(exception.getCause().getCause(), instanceOf(JsonParsingException.class));
+        assertThat(exception.getCause(), instanceOf(AdapterException.class));
+        assertThat(exception.getCause().getMessage(),
+                containsString("E-VSCJDBC-4: Could not parse the column adapter notes of column 'col1'."));
     }
 }
