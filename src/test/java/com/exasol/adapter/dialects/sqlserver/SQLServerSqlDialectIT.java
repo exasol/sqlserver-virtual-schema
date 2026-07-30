@@ -147,7 +147,7 @@ class SQLServerSqlDialectIT {
     }
 
     private String getExpectedSqlServerDate(final String query) throws SQLException {
-        try (final Connection = MS_SQL_SERVER_CONTAINER.createConnection("");
+        try (final Connection connection = MS_SQL_SERVER_CONTAINER.createConnection("");
                 final Statement statement = connection.createStatement();
                 final ResultSet resultSet = statement.executeQuery(query)) {
             assertTrue(resultSet.next(), "Expected SQL Server query to return one row");
