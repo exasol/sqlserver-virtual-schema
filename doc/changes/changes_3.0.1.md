@@ -26,8 +26,11 @@ In Eclipse Parsson published Maven Central artifacts before version 1.1.8, the J
 
 ### Test Dependency Updates
 
-* Updated `com.exasol:exasol-testcontainers:7.2.3` to `7.3.0`
-* Updated `com.exasol:test-db-builder-java:4.0.0` to `4.0.1`
+* Updated `com.exasol:exasol-test-setup-abstraction-java:2.1.11` to `3.0.0`
+* Updated `com.exasol:exasol-testcontainers:7.2.3` to `8.0.1`
+* Updated `com.exasol:hamcrest-resultset-matcher:1.7.2` to `1.7.3`
+* Updated `com.exasol:test-db-builder-java:4.0.0` to `4.0.2`
+* Updated `com.exasol:udf-debugging-java:0.6.18` to `0.6.20`
 * Updated `com.exasol:virtual-schema-common-jdbc:14.0.2` to `14.0.4`
 * Updated `org.slf4j:slf4j-jdk14:2.0.17` to `2.0.18`
 
