@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
@@ -48,7 +47,7 @@ class SQLServerSqlDialectIT {
     private static final String VIRTUAL_SCHEMA_JDBC = "VIRTUAL_SCHEMA_JDBC";
     private static final String JDBC_DRIVER_NAME = "mssql-jdbc.jar";
     private static final Path JDBC_DRIVER_PATH = Path.of("target/sqlserver-driver/" + JDBC_DRIVER_NAME);
-    public static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "virtual-schema-dist-14.0.2-sqlserver-3.0.0.jar";
+    public static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "virtual-schema-dist-14.0.4-sqlserver-3.0.1.jar";
     public static final Path PATH_TO_VIRTUAL_SCHEMAS_JAR = Path.of("target", VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION);
     public static final String SCHEMA_EXASOL = "SCHEMA_EXASOL";
     public static final String ADAPTER_SCRIPT_EXASOL = "ADAPTER_SCRIPT_EXASOL";
@@ -144,6 +143,15 @@ class SQLServerSqlDialectIT {
     private ResultSet getActualResultSet(final String query) throws SQLException {
         try (final Statement statement = exasolConnection.createStatement()) {
             return statement.executeQuery(query);
+        }
+    }
+
+    private String getExpectedSqlServerDate(final String query) throws SQLException {
+        try (final Connection connection = MS_SQL_SERVER_CONTAINER.createConnection("");
+                final Statement statement = connection.createStatement();
+                final ResultSet resultSet = statement.executeQuery(query)) {
+            assertTrue(resultSet.next(), "Expected SQL Server query to return one row");
+            return resultSet.getString(1);
         }
     }
 
@@ -312,7 +320,7 @@ class SQLServerSqlDialectIT {
         final String query = "SELECT CURRENT_DATE FROM " + VIRTUAL_SCHEMA_JDBC + "." + TABLE_SQL_SERVER_SIMPLE
                 + " LIMIT 1";
         final ResultSet expected = getExpectedResultSet(List.of("col1 DATE"),
-                List.of("'" + LocalDate.now() + "'"));
+                List.of("'" + getExpectedSqlServerDate("SELECT CAST(GETDATE() AS DATE)") + "'"));
         final String expectedRewrittenQuery = "SELECT TOP 1 CAST(GETDATE() AS DATE) FROM";
         assertAll(() -> assertThat(getActualResultSet(query), matchesResultSet(expected)),
                 () -> assertThat(getExplainVirtualString(query), containsString(expectedRewrittenQuery)));
