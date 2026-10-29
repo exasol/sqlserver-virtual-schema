@@ -1,12 +1,27 @@
-# Virtual Schema for SQLServer 4.0.0, released 2026-??-??
+# Virtual Schema for SQLServer 4.0.0, released 2026-10-29
 
-Code name:
+Code name: Safer dependency parsing
 
 ## Summary
 
+This release fixes vulnerabilities in test dependencies used to process class files and SSH host keys.
+
+## Breaking Changes
+
+* This project now requires Java 17 and is not compatible with Exasol 8.
+
 ## Security
 
-* #50: Fixed vulnerability CVE-2026-86231 in dependency `com.github.mwiede:jsch:jar:2.28.5:test`
+* #54: Fixed CVE-2026-110257 (unvalidated bootstrap method allocation) in dependency `org.ow2.asm:asm:jar:9.10.1:test`
+* #55: Fixed CVE-2026-110258 (excessive subroutine memory allocation) in dependency `org.ow2.asm:asm:jar:9.10.1:test`
+* #56: Fixed CVE-2026-110259 (recursive jump processing) in dependency `org.ow2.asm:asm:jar:9.10.1:test`
+* #57: Fixed CVE-2026-110260 (quadratic frame computation) in dependency `org.ow2.asm:asm:jar:9.10.1:test`
+* #58: Fixed CVE-2026-110261 (slow frame computation) in dependency `org.ow2.asm:asm:jar:9.10.1:test`
+* #59: Fixed CVE-2026-110263 (recursive signature parsing) in dependency `org.ow2.asm:asm:jar:9.10.1:test`
+* #52: Fixed CVE-2026-110262 (excessive constructor frame allocation) in dependency `org.ow2.asm:asm-commons:jar:9.10.1:test`
+* #53: Fixed CVE-2026-110270 (exponential subroutine inlining allocation) in dependency `org.ow2.asm:asm-commons:jar:9.10.1:test`
+* #50: Fixed CVE-2026-86231 (improper certificate revocation check) in dependency `com.github.mwiede:jsch:jar:2.28.5:test`
+* Fixed CVE-2026-116486 (incorrect symbolic name to object mapping) in dependency `org.objenesis:objenesis:jar:3.3:test`
 
 ## Dependency Updates
 
