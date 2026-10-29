@@ -10,7 +10,9 @@ For details on what is collected and how to disable telemetry, see the [document
 
 ## Uploading the JDBC Driver to Exasol BucketFS
 
-1. Download the [SQL Server JDBC driver](https://github.com/microsoft/mssql-jdbc/releases). We recommend using a `jre8` driver.
+1. Download the [SQL Server JDBC driver](https://github.com/microsoft/mssql-jdbc/releases). We recommend using a `jre11` driver.
+
+   **Note**: the `jre11` driver requires `NOSECURITY=YES` in `settings.cfg` (see below).
 2. Upload the driver to BucketFS, see the [BucketFS documentation](https://docs.exasol.com/db/latest/administration/on-premise/bucketfs/accessfiles.htm) for details.
 
     Hint: Put the driver into folder `default/drivers/jdbc/` to register it for [ExaLoader](#registering-the-jdbc-driver-for-exaloader), too.
