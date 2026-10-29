@@ -37,7 +37,7 @@ import com.github.dockerjava.api.model.NetworkSettings;
 @Testcontainers
 class SQLServerSqlDialectIT {
     // Available versions: https://mcr.microsoft.com/artifact/mar/mssql/server/tags
-    private static final String MS_SQL_SERVER_CONTAINER_NAME = "mcr.microsoft.com/mssql/server:2025-CU4-ubuntu-24.04";
+    private static final String MS_SQL_SERVER_CONTAINER_NAME = "mcr.microsoft.com/mssql/2025-CU9-GDR1-ubuntu-24.04";
     private static final String SCHEMA_SQL_SERVER = "SCHEMA_SQL_SERVER";
     private static final String TABLE_SQL_SERVER_NUMERIC_AND_DATE_DATA_TYPES = "TABLE_SQL_SERVER_NUMERIC_AND_DATE";
     private static final String TABLE_SQL_SERVER_STRING_DATA_TYPES = "TABLE_SQL_SERVER_STRING";
@@ -47,7 +47,7 @@ class SQLServerSqlDialectIT {
     private static final String VIRTUAL_SCHEMA_JDBC = "VIRTUAL_SCHEMA_JDBC";
     private static final String JDBC_DRIVER_NAME = "mssql-jdbc.jar";
     private static final Path JDBC_DRIVER_PATH = Path.of("target/sqlserver-driver/" + JDBC_DRIVER_NAME);
-    public static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "virtual-schema-dist-14.0.4-sqlserver-3.0.2.jar";
+    public static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "virtual-schema-dist-14.1.1-sqlserver-4.0.0.jar";
     public static final Path PATH_TO_VIRTUAL_SCHEMAS_JAR = Path.of("target", VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION);
     public static final String SCHEMA_EXASOL = "SCHEMA_EXASOL";
     public static final String ADAPTER_SCRIPT_EXASOL = "ADAPTER_SCRIPT_EXASOL";
