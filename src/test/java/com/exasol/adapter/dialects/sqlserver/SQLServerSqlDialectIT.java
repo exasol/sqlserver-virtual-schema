@@ -13,6 +13,7 @@ import java.sql.*;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.hamcrest.Matcher;
@@ -36,6 +37,7 @@ import com.github.dockerjava.api.model.NetworkSettings;
 @Tag("integration")
 @Testcontainers
 class SQLServerSqlDialectIT {
+    private static final Logger LOGGER = Logger.getLogger(SQLServerSqlDialectIT.class.getName());
     // Available versions: https://mcr.microsoft.com/artifact/mar/mssql/server/tags
     private static final String MS_SQL_SERVER_CONTAINER_NAME = "mcr.microsoft.com/mssql/server:2025-CU9-GDR1-ubuntu-24.04";
     private static final String SCHEMA_SQL_SERVER = "SCHEMA_SQL_SERVER";
@@ -54,6 +56,11 @@ class SQLServerSqlDialectIT {
     public static final String JDBC_DRIVER_CONFIGURATION_FILE_NAME = "settings.cfg";
 
     private static Connection exasolConnection;
+
+    @BeforeEach
+    void logTestStart(final TestInfo testInfo) {
+        LOGGER.info(() -> "Starting test: " + testInfo.getDisplayName());
+    }
 
     @Container
     private static final MSSQLServerContainer MS_SQL_SERVER_CONTAINER = new MSSQLServerContainer(
