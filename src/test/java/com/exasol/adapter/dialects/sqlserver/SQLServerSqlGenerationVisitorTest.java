@@ -161,7 +161,7 @@ class SQLServerSqlGenerationVisitorTest {
             "HASH_MD5 : CONVERT(Char, HASHBYTES('MD5','left'), 2)", //
             "HASH_SHA1 : CONVERT(Char, HASHBYTES('SHA1','left'), 2)", //
             "ZEROIFNULL : ISNULL('left',0)" //
-    }, delimiter = ':')
+    }, delimiter = ':', quoteCharacter = '"')
     @ParameterizedTest
     void testVisitSqlFunctionScalarWithTwoArguments(final ScalarFunction scalarFunction, final String expected)
             throws AdapterException {
