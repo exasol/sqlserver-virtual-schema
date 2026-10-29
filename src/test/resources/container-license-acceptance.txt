@@ -1,1 +1,1 @@
-mcr.microsoft.com/mssql/server:2025-CU4-ubuntu-24.04
+mcr.microsoft.com/mssql/server:2025-CU9-GDR1-ubuntu-24.04

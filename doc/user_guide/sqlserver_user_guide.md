@@ -1,6 +1,6 @@
 # Microsoft SQL Server SQL Dialect User Guide
 
-[Microsoft SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server) is a Relational Database Management System (RDBMS) developed by Microsoft. 
+[Microsoft SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server) is a Relational Database Management System (RDBMS) developed by Microsoft.
 
 ## Telemetry
 
@@ -10,7 +10,9 @@ For details on what is collected and how to disable telemetry, see the [document
 
 ## Uploading the JDBC Driver to Exasol BucketFS
 
-1. Download the [SQL Server JDBC driver](https://github.com/microsoft/mssql-jdbc/releases). We recommend using a `jre8` driver.
+1. Download the [SQL Server JDBC driver](https://github.com/microsoft/mssql-jdbc/releases). We recommend using a `jre11` driver.
+
+   **Note**: the `jre11` driver requires `NOSECURITY=YES` in `settings.cfg` (see below).
 2. Upload the driver to BucketFS, see the [BucketFS documentation](https://docs.exasol.com/db/latest/administration/on-premise/bucketfs/accessfiles.htm) for details.
 
     Hint: Put the driver into folder `default/drivers/jdbc/` to register it for [ExaLoader](#registering-the-jdbc-driver-for-exaloader), too.
@@ -48,7 +50,7 @@ The SQL statement below creates the adapter script, defines the Java class that 
 ```sql
 CREATE OR REPLACE JAVA ADAPTER SCRIPT SCHEMA_FOR_VS_SCRIPT.ADAPTER_SCRIPT_SQLSERVER AS
   %scriptclass com.exasol.adapter.RequestDispatcher;
-  %jar /buckets/<BFS service>/<bucket>/virtual-schema-dist-14.0.4-sqlserver-3.0.1.jar;
+  %jar /buckets/<BFS service>/<bucket>/virtual-schema-dist-14.1.1-sqlserver-4.0.0.jar;
   %jar /buckets/<BFS service>/<bucket>/mssql-jdbc-<version>.jre8.jar;
 /
 ```
@@ -87,39 +89,39 @@ Provide the SQL server's database name using one of the suggested ways:
 
 MS SERVER Data Type | Supported | Converted Exasol Data Type| Known limitations
 --------------------|-----------|---------------------------|-------------------
-BIGINT              |  ✓        | DECIMAL                   | 
-BINARY              |  ×        |                           | 
-BIT                 |  ✓        | BOOLEAN                   | 
-CHAR                |  ✓        | CHAR                      | 
-DATE                |  ✓        | DATE                      | 
-DATETIME            |  ✓        | TIMESTAMP                 | 
-DATETIME2           |  ✓        | TIMESTAMP                 | 
-DATETIMEOFFSET      |  ✓        | VARCHAR(34)               | 
-DECIMAL             |  ✓        | DECIMAL                   |  
-FLOAT               |  ✓        | DOUBLE PRECISION          |  
-GEOMETRY            |  ×        |                           | 
-GEOGRAPHY           |  ×        |                           | 
-HIERARCHYID         |  ×        |                           | 
-IMAGE               |  ×        |                           | 
-INT                 |  ✓        | DECIMAL                   | 
-MONEY               |  ✓        | DECIMAL                   | 
-NCHAR               |  ✓        | CHAR                      | 
-NTEXT               |  ✓        | VARCHAR(2000000)          | 
-NVARCHAR            |  ✓        | VARCHAR                   | 
-NUMERIC             |  ✓        | DECIMAL                   | 
-SQL_VARIANT         |  ×        |                           | 
-REAL                |  ✓        | DOUBLE PRECISION          | 
-ROWVERSION          |  ×        |                           | 
-SMALLDATETIME       |  ✓        | TIMESTAMP                 | 
-SMALLINT            |  ✓        | DECIMAL                   | 
-SMALLMONEY          |  ✓        | DECIMAL                   | 
-TEXT                |  ✓        | VARCHAR(2000000)          | 
-TIME                |  ✓        | VARCHAR(16)               |  
-TINYINT             |  ✓        | DECIMAL                   | 
-UNIQUEIDENTIFIER    |  ✓        | CHAR(36)                  | 
-VARBINARY           |  ×        |                           | 
-VARCHAR             |  ✓        | VARCHAR                   | 
-XML                 |  ×        |                           | 
+BIGINT              |  ✓        | DECIMAL                   |
+BINARY              |  ×        |                           |
+BIT                 |  ✓        | BOOLEAN                   |
+CHAR                |  ✓        | CHAR                      |
+DATE                |  ✓        | DATE                      |
+DATETIME            |  ✓        | TIMESTAMP                 |
+DATETIME2           |  ✓        | TIMESTAMP                 |
+DATETIMEOFFSET      |  ✓        | VARCHAR(34)               |
+DECIMAL             |  ✓        | DECIMAL                   |
+FLOAT               |  ✓        | DOUBLE PRECISION          |
+GEOMETRY            |  ×        |                           |
+GEOGRAPHY           |  ×        |                           |
+HIERARCHYID         |  ×        |                           |
+IMAGE               |  ×        |                           |
+INT                 |  ✓        | DECIMAL                   |
+MONEY               |  ✓        | DECIMAL                   |
+NCHAR               |  ✓        | CHAR                      |
+NTEXT               |  ✓        | VARCHAR(2000000)          |
+NVARCHAR            |  ✓        | VARCHAR                   |
+NUMERIC             |  ✓        | DECIMAL                   |
+SQL_VARIANT         |  ×        |                           |
+REAL                |  ✓        | DOUBLE PRECISION          |
+ROWVERSION          |  ×        |                           |
+SMALLDATETIME       |  ✓        | TIMESTAMP                 |
+SMALLINT            |  ✓        | DECIMAL                   |
+SMALLMONEY          |  ✓        | DECIMAL                   |
+TEXT                |  ✓        | VARCHAR(2000000)          |
+TIME                |  ✓        | VARCHAR(16)               |
+TINYINT             |  ✓        | DECIMAL                   |
+UNIQUEIDENTIFIER    |  ✓        | CHAR(36)                  |
+VARBINARY           |  ×        |                           |
+VARCHAR             |  ✓        | VARCHAR                   |
+XML                 |  ×        |                           |
 
 ## Testing information
 
@@ -130,15 +132,16 @@ In the following matrix you find combinations of JDBC driver and dialect version
 | 2.1.1                  | 2019-CU17-ubuntu-20.04 | MS SQL JDBC JRE 8 | 11.2.0.jre8    |
 | 2.1.2                  | 2022-CU10-ubuntu-22.04 | MS SQL JDBC JRE 8 | 12.4.2.jre8    |
 | 2.1.4                  | 2022-CU17-ubuntu-22.04 | MS SQL JDBC JRE 8 | 12.8.1.jre8    |
-| 3.0.0 (Latest)         | 2025-CU4-ubuntu-24.04  | MS SQL JDBC JRE 8 | 13.4.0.jre8    |
+| 3.0.0                  | 2025-CU4-ubuntu-24.04  | MS SQL JDBC JRE 8 | 13.4.0.jre8    |
+| 4.0.0 (Latest)         | 2025-CU9-GDR1-ubuntu-24.04 | MS SQL JDBC JRE 11 | 13.4.0.jre11    |
 
 ## Known Issues
 
-* Select with boolean expressions, such as `SELECT c1 = 1` or `SELECT c2 IS NULL` won't work with this Virtual Schema 
+* Select with boolean expressions, such as `SELECT c1 = 1` or `SELECT c2 IS NULL` won't work with this Virtual Schema
 because SQL Server doesn't support a boolean data type. But the same behaviour can be achieved using a `CASE WHEN`
 expression, i.e. `SELECT CASE WHEN c1 = 1 THEN true ELSE false END` or `SELECT CASE WHEN c2 IS NULL THEN true ELSE false END`
 as in this case the Virtual Schema will handle the result as an SQLServer BIT type that will be converted to an Exasol BOOLEAN.
 
-* SQL Server doesn't support `NULLS FIRST / LAST` syntax and always orders `NULL` first when using ascending order, and last 
-when using descending order. As a workaround an `NVL` function can be used with the highest value depending on the column type, 
+* SQL Server doesn't support `NULLS FIRST / LAST` syntax and always orders `NULL` first when using ascending order, and last
+when using descending order. As a workaround an `NVL` function can be used with the highest value depending on the column type,
 e.g. `ORDER BY NVL(NUM, 9999999999), NVL(NAME, 'ZZZZZZ')`
